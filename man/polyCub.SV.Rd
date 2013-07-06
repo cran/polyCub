@@ -15,9 +15,9 @@
   \code{"\linkS4class{Polygon}"} (for these we have an
   internal \code{\link{xylist}} method).}
 
-  \item{f}{two-dimensional function to be integrated. As
-  its first argument the function must take a coordinate
-  matrix, i.e. a numeric matrix with two columns.}
+  \item{f}{two-dimensional function. As its first argument
+  it must take a coordinate matrix, i.e. a numeric matrix
+  with two columns.}
 
   \item{...}{further arguments for \code{f}.}
 
@@ -71,9 +71,9 @@
   formula. Bit Numerical Mathematics, 47 (2), 441-453.
 }
 \seealso{
-  Other polyCub.methods: \code{\link{polyCub}},
-  \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.midpoint}}
+  Other polyCub.methods: \code{\link{.polyCub.iso}},
+  \code{\link{polyCub}}, \code{\link{polyCub.exact.Gauss}},
+  \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
 }
 \keyword{math}
 \keyword{spatial}

@@ -3,8 +3,8 @@
 \title{Wrapper Function for the Various Cubature Methods}
 \usage{
   polyCub(polyregion, f,
-    method = c("SV", "midpoint", "exact.Gauss"), ...,
-    plot = FALSE)
+    method = c("SV", "midpoint", "iso", "exact.Gauss"),
+    ..., plot = FALSE)
 }
 \arguments{
   \item{polyregion}{a polygonal integration domain. The
@@ -22,9 +22,10 @@
   since it is specific to the bivariate normal density.}
 
   \item{method}{choose one of the implemented cubature
-  methods (partial argument matching is applied). Defaults
-  to using the product Gauss cubature implemented in
-  \code{\link{polyCub.SV}}.}
+  methods (partial argument matching is applied), see
+  \code{help("\link{polyCub-package}")} for an overview.
+  Defaults to using the product Gauss cubature implemented
+  in \code{\link{polyCub.SV}}.}
 
   \item{...}{arguments of \code{f} or of the specific
   \code{method}.}
@@ -33,7 +34,7 @@
   the numerical integration should be produced.}
 }
 \value{
-  The approximated value of the integral of \code{f} over
+  The approximated integral of \code{f} over
   \code{polyregion}.
 }
 \description{
@@ -52,10 +53,7 @@ library("spatstat")
 disc.owin <- disc(radius=5, centre=c(3,2), npoly=8)
 
 ## plot image of the function and integration domain
-gr <- seq(-8, 8, by=0.2)
-vals <- matrix(f(expand.grid(gr,gr)), nrow=length(gr))
-image(x=gr, y=gr, z=vals)
-plot.owin(disc.owin, hatch=TRUE, add=TRUE)
+plotpolyf(disc.owin, f, xlim=c(-8,8), ylim=c(-8,8))
 
 
 ### Quasi-exact cubature of the bivariate Gaussian density
@@ -71,10 +69,7 @@ if (requireNamespace("mvtnorm") && gpclibPermit()) {
 
 testmidpoint <- function (eps, main=paste("2D midpoint rule with eps =",eps))
 {
-    image(x=gr, y=gr, z=vals, main=main)
-    plot.owin(disc.owin, hatch=TRUE, add=TRUE)
-    ## add binary mask to plot
-    #plot(as.mask(disc.owin, eps=eps), add=TRUE, box=FALSE)
+    plotpolyf(disc.owin, f, xlim=c(-8,8), ylim=c(-8,8), use.lattice=FALSE)    
     ## add evaluation points to plot
     with(as.mask(disc.owin, eps=eps),
          points(expand.grid(xcol, yrow), col=m, pch=20))
@@ -94,15 +89,21 @@ for (nGQ in c(1:5,10,20,60)) {
         "\\n")
 }
 
-## baseline 'alpha' effects location of nodes (may fall outside the polygon)
-polyCub.SV(disc.owin, f, nGQ=2, alpha=0, plot=TRUE)
+## 'rotation' affects location of nodes
+polyCub.SV(disc.owin, f, nGQ=2, rotation=FALSE, plot=TRUE)
 op <- par(new=TRUE, col=2)
-polyCub.SV(disc.owin, f, nGQ=2, alpha=3, plot=TRUE)
+polyCub.SV(disc.owin, f, nGQ=2, rotation=TRUE, plot=TRUE)
 par(op)
+
+
+### Line integration along the boundary for isotropic functions
+polyCub.iso(disc.owin, f, center=c(0,0))
 }
 \seealso{
-  Other polyCub.methods: \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.midpoint}}, \code{\link{polyCub.SV}}
+  Other polyCub.methods: \code{\link{.polyCub.iso}},
+  \code{\link{polyCub.SV}},
+  \code{\link{polyCub.exact.Gauss}},
+  \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
 }
 \keyword{math}
 \keyword{spatial}

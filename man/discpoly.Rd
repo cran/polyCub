@@ -2,14 +2,15 @@
 \alias{discpoly}
 \title{Polygonal Approximation of a Disc/Circle}
 \usage{
-  discpoly(center, r, npoly = 64,
+  discpoly(center, radius, npoly = 64,
     class = c("Polygon", "owin", "gpc.poly"), hole = FALSE)
 }
 \arguments{
   \item{center}{numeric vector of length 2 (center
   coordinates of the circle).}
 
-  \item{r}{single numeric value (radius of the circle).}
+  \item{radius}{single numeric value (radius of the
+  circle).}
 
   \item{npoly}{single integer. Number of edges of the
   polygonal approximation.}

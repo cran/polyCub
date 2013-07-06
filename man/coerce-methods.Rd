@@ -1,17 +1,17 @@
 \name{coerce-methods}
-\alias{coerce,gpc.poly,owin-method}
-\alias{coerce,gpc.poly,Polygons-method}
-\alias{coerce-methods}
-\alias{coerce,owin,gpc.poly-method}
 \alias{coerce,Polygon,gpc.poly-method}
 \alias{coerce,Polygons,gpc.poly-method}
+\alias{coerce,gpc.poly,Polygons-method}
+\alias{coerce,gpc.poly,owin-method}
+\alias{coerce,owin,gpc.poly-method}
+\alias{coerce-methods}
 \alias{xylist}
-\alias{xylist.default}
-\alias{xylist.gpc.poly}
-\alias{xylist.owin}
 \alias{xylist.Polygon}
 \alias{xylist.Polygons}
 \alias{xylist.SpatialPolygons}
+\alias{xylist.default}
+\alias{xylist.gpc.poly}
+\alias{xylist.owin}
 \title{Polygon Coercion Between Different Spatial Classes}
 \usage{
   xylist(object, ...)
@@ -50,7 +50,8 @@
 \description{
   Different packages concerned with spatial data use
   different polygon specifications. The package
-  \pkg{polyCub} offers S4-style coerce-methods to convert
+  \pkg{polyCub} offers \code{coerce}-methods
+  (\code{as(object, Class)}) to convert
   \code{"\link[sp:Polygons-class]{Polygons}"} of the
   \pkg{sp} package, and
   \code{"\link[spatstat:owin.object]{owin}"} objects of the

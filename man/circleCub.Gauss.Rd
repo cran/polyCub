@@ -40,7 +40,7 @@ circleCub.Gauss(center=c(1,2), r=3, mean=c(4,5), sd=6)
 
 if (gpclibPermit()) {
   ## compare with cubature over a polygonal approximation of a circle
-  disc.poly <- discpoly(center=c(1,2), r=3, npoly=32, class="gpc.poly")
+  disc.poly <- discpoly(center=c(1,2), radius=3, npoly=32, class="gpc.poly")
   polyCub.exact.Gauss(disc.poly, mean=c(4,5), Sigma=6^2*diag(2))
 }
 }

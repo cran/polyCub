@@ -46,9 +46,10 @@
   Statistical Software 12 (6), 1-42.
 }
 \seealso{
-  Other polyCub.methods: \code{\link{polyCub}},
+  Other polyCub.methods: \code{\link{.polyCub.iso}},
+  \code{\link{polyCub}}, \code{\link{polyCub.SV}},
   \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.SV}}
+  \code{\link{polyCub.iso}}
 }
 \keyword{math}
 \keyword{spatial}

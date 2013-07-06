@@ -4,31 +4,36 @@
 \title{Cubature over Polygonal Domains}
 \description{
   The \R package \pkg{polyCub} provides methods for
-  cubature (numerical integration) over polygonal domains.
-  The function \code{polyCub} is the main entry point of
-  the package. It is a wrapper around the specific cubature
-  methods available in the package.
+  \strong{cubature} (numerical integration) \strong{over
+  polygonal domains}. The function \code{\link{polyCub}()}
+  is the main entry point of the package. It is a wrapper
+  around the specific cubature methods listed below.
 }
 \details{
-  The following (non-adaptive) cubature methods are
-  provided: \describe{
-  \item{\code{\link{polyCub.midpoint}}:}{ Two-dimensional
-  midpoint rule. Polygons are converted to binary pixel
-  images using the \code{\link[spatstat]{as.im.function}}
-  method from package \pkg{spatstat}. The integral is then
-  obtained as the sum over (pixel area * f(pixel
-  midpoint)). } \item{\code{\link{polyCub.SV}}:}{ Product
-  Gauss cubature as proposed by Sommariva and Vianello
-  (2007). } \item{\code{\link{polyCub.exact.Gauss}}:}{
-  Quasi-exact method specific to the integration of the
-  bivariate Gaussian density over polygonal domains. It is
-  based on formulae from Chapter 26 of the Abramowitz and
-  Stegun (1970) handbook, i.e. triangulation of the
-  polygonal domain and appropriate evaluations of
+  \describe{ \item{\code{\link{polyCub.midpoint}}:}{
+  Two-dimensional midpoint rule. Polygons are converted to
+  binary pixel images using the
+  \code{\link[spatstat]{as.im.function}} method from
+  package \pkg{spatstat}. The integral is then obtained as
+  the sum over (pixel area * f(pixel midpoint)). }
+  \item{\code{\link{polyCub.SV}}:}{ Product Gauss cubature
+  as proposed by Sommariva and Vianello (2007). }
+  \item{\code{\link{polyCub.iso}}:}{ Efficient adaptive
+  cubature for \emph{isotropic} functions via line
+  \code{\link{integrate}()} along the polygon boundary. }
+  \item{\code{\link{polyCub.exact.Gauss}}:}{ Quasi-exact
+  method specific to the integration of the \emph{bivariate
+  Gaussian density} over polygonal domains. It is based on
+  formulae from Chapter 26 of the Abramowitz and Stegun
+  (1970) handbook, i.e. triangulation of the polygonal
+  domain and appropriate evaluations of
   \code{\link[mvtnorm]{pmvnorm}} from package
-  \pkg{mvtnorm}. } } See Section 3.2 of Meyer (2010) for a
-  more detailed description and benchmark experiment of
-  those three (among others).
+  \pkg{mvtnorm}. Note that there is also a function
+  \code{\link{circleCub.Gauss}} to perform integration of
+  the \emph{isotropic} Gaussian density over \emph{circular
+  domains}. } } See Section 3.2 of Meyer (2010) for a more
+  detailed description and benchmark experiment of some of
+  the above cubature methods (and others).
 }
 \references{
   M. Abramowitz and I. A. Stegun (1970). Handbook of

@@ -32,18 +32,18 @@
   (as is the \code{pmvnorm} function). }
 }
 \description{
-  Integration is based on triangulation and formulae from
-  Chapter 26 of the Abramowitz & Stegun handbook (Section
-  26.9, Example 9, pp. 956f.). This method is quite
-  cumbersome because the A&S formula is only for triangles
-  where one vertex is the origin (0,0). For each triangle
-  of the \code{\link[gpclib]{tristrip}} we have to check in
-  which of the 6 outer regions of the triangle the origin
-  (0,0) lies and adapt the signs in the formula
-  appropriately. (AOB+BOC-AOC) or (AOB-AOC-BOC) or
-  (AOB+AOC-BOC) or (AOC+BOC-AOB) or \ldots. However, the
-  most time consuming step is the evaluation of
-  \code{\link[mvtnorm]{pmvnorm}}.
+  Integration is based on triangulation of the polygonal
+  domain and formulae from Chapter 26 of the Abramowitz &
+  Stegun handbook (Section 26.9, Example 9, pp. 956f.).
+  This method is quite cumbersome because the A&S formula
+  is only for triangles where one vertex is the origin
+  (0,0). For each triangle of the
+  \code{\link[gpclib]{tristrip}} we have to check in which
+  of the 6 outer regions of the triangle the origin (0,0)
+  lies and adapt the signs in the formula appropriately.
+  (AOB+BOC-AOC) or (AOB-AOC-BOC) or (AOB+AOC-BOC) or
+  (AOC+BOC-AOB) or \ldots. However, the most time consuming
+  step is the evaluation of \code{\link[mvtnorm]{pmvnorm}}.
 }
 \note{
   The package \pkg{gpclib} (which is required to produce
@@ -63,8 +63,12 @@
   Publications.
 }
 \seealso{
-  Other polyCub.methods: \code{\link{polyCub}},
-  \code{\link{polyCub.midpoint}}, \code{\link{polyCub.SV}}
+  \code{\link{circleCub.Gauss}} for quasi-exact cubature of
+  the isotropic Gaussian density over a circular domain.
+
+  Other polyCub.methods: \code{\link{.polyCub.iso}},
+  \code{\link{polyCub}}, \code{\link{polyCub.SV}},
+  \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
 }
 \keyword{math}
 \keyword{spatial}

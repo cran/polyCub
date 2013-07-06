@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2009-2013 Sebastian Meyer
-### Time-stamp: <[polyCub.SV.R] by SM Sam 11/05/2013 16:47 (CEST)>
+### Time-stamp: <[polyCub.SV.R] by SM Sam 06/07/2013 17:29 (CEST)>
 ################################################################################
 
 
@@ -19,8 +19,8 @@
 #' \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
 #' and \code{"\linkS4class{Polygon}"}
 #' (for these we have an internal \code{\link{xylist}} method).
-#' @param f two-dimensional function to be integrated.
-#' As its first argument the function must take a coordinate matrix, i.e. a
+#' @param f two-dimensional function.
+#' As its first argument it must take a coordinate matrix, i.e. a
 #' numeric matrix with two columns.
 #' @param ... further arguments for \code{f}.
 #' @param nGQ degree of the one-dimensional Gauss-Legendre quadrature rule
@@ -80,13 +80,7 @@ polyCub.SV <- function (polyregion, f, ...,
 
 ### ILLUSTRATION ###
     if (plot) {
-        if (inherits(polyregion, "Polygon"))
-            polyregion <- Polygons(list(polyregion), "ID")
-        if (inherits(polyregion, "Polygons"))
-            polyregion <- SpatialPolygons(list(polyregion))
-        if (inherits(polyregion, "gpc.poly")) {
-            plot(polyregion, poly.args=list(lwd=2), ann=FALSE)
-        } else plot(polyregion, lwd=2, axes=TRUE, main="")
+        plotpolyf(polys, f, ..., use.lattice=FALSE)
         for (i in seq_along(polys)) {
             nw <- polygauss(polys[[i]], nw_N, nw_M, alpha, rotation)
             points(nw$nodes, cex=0.6, pch = i) #, col=1+(nw$weights<=0)
