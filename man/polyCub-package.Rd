@@ -55,7 +55,7 @@
   formula. Bit Numerical Mathematics, 47 (2), 441-453.
 }
 \seealso{
-  The packages \pkg{cubature} and \pkg{R2cuba}, which are
+  The packages \pkg{cubature} and \pkg{R2Cuba}, which are
   more appropriate for cubature over simple hypercubes.
 }
 

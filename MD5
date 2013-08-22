@@ -1,5 +1,5 @@
-2aeaff553d794ab684a60c4bdc332704 *DESCRIPTION
-942bfe0fcdd6ccc6efa28f761e73021e *NAMESPACE
+b9a8e0589fbbc4486e5673d27866c1b1 *DESCRIPTION
+5b5034e37c2eab30fdc928cdc2150c28 *NAMESPACE
 c70ba62f1303941afd754532a07bd571 *R/circleCub.R
 e583031db92249a77275bc2240e8bfab *R/coerce-methods.R
 37be18a7ca874434d8aa3f2df2716230 *R/discpoly.R
@@ -10,8 +10,8 @@ a63126dfab87985edd39865b0ff38e5a *R/polyCub.exact.Gauss.R
 8e60d8b3d6a2087b3307bd2e7060bda8 *R/polyCub.iso.R
 5793a84a00f0a7a2d32012ab5bdcfe79 *R/polyCub.midpoint.R
 74e5eda293a9a98c66e193145cfa1a0c *R/tools.R
-867c2d7fab01a51f896c777aa6c13c73 *R/zzz.R
-9ebd62f77b2afd13345c04196b6939d5 *inst/NEWS.Rd
+8d9ae94043013a34aecb84120f7c7b09 *R/zzz.R
+2be5fe57e52e1dde0b9445dafe916a35 *inst/NEWS.Rd
 16297fc3f660d7e9e3eb0d1500a49213 *inst/examples/discpoly.R
 5669bcbb7d792bec7d5c3379f5b13e0a *inst/examples/plotpolyf.R
 b7497b0a82c684e44695a38f0f27536f *inst/examples/polyCub.R
@@ -27,7 +27,7 @@ b9429722b428a77701210cde1f682f12 *man/gpclibPermit.Rd
 7a669ac691ba13b1d926ae3c9c55cd51 *man/makegrid.Rd
 c3528d603db2362dc409d6e5ad2bbd8f *man/plot_polyregion.Rd
 d944db230a4829df28e90c61b7002b5a *man/plotpolyf.Rd
-b79a0398e8ac0927757c9bdd26ef75c1 *man/polyCub-package.Rd
+e546249ebaef7f757f2be526d62c16ad *man/polyCub-package.Rd
 8677548a43584b44a825d443c3dbc793 *man/polyCub.Rd
 199cc04dcd6848d324dfceda6e9b9426 *man/polyCub.SV.Rd
 ef0e288943d46a484221b998c272c1f3 *man/polyCub.exact.Gauss.Rd
