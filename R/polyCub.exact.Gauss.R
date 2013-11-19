@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2009-2013 Sebastian Meyer
-### Time-stamp: <[polyCub.exact.Gauss.R] by SM Sam 06/07/2013 13:06 (CEST)>
+### Time-stamp: <[polyCub.exact.Gauss.R] by SM Don 07/11/2013 21:06 (CET)>
 ################################################################################
 
 
@@ -27,8 +27,10 @@
 #' It has to be accepted explicitly via
 #' \code{\link{gpclibPermit}()} prior to using \code{polyCub.exact.Gauss}.
 #'
-#' @param polyregion anything coercible to a
-#' \code{"\link[gpclib:gpc.poly-class]{gpc.poly}"} polygon.
+#' @param polyregion a \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} polygon or
+#' something that can be coerced to this class, e.g., an \code{"owin"} polygon
+#' (converted via \code{\link{owin2gpc}} and -- given \pkg{rgeos} is available
+#' -- \code{"SpatialPolygons"} also work. 
 #' @param mean,Sigma mean and covariance matrix of the bivariate normal density
 #' to be integrated.
 #' @param plot logical indicating if an illustrative plot of the numerical
@@ -57,13 +59,22 @@
 #' isotropic Gaussian density over a circular domain.
 #' @family polyCub-methods
 #' @examples # see example(polyCub)
+#' @import methods
+#' @import sp
+#' @importFrom stats cov2cor
+#' @importFrom spatstat is.polygonal
 #' @export
 
 polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
                                  plot = FALSE)
 {
     gpclibCheck()
-    polyregion <- as(polyregion, "gpc.poly")
+    if (is.polygonal(polyregion)) {
+        polyregion <- owin2gpc(polyregion)
+    } else if (!inherits(polyregion, "gpc.poly")) {
+        loadNamespace("rgeos")
+        polyregion <- as(polyregion, "gpc.poly")
+    }
     
     ## coordinate transformation so that the standard bivariat normal density
     ## can be used in integrations (cf. formula 26.3.22)
@@ -166,6 +177,7 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
 
 ## calculates the integral of the standard bivariat normal
 ## over a triangle bounded by y=0, y=ax, x=h (cf. formula 26.3.23)
+##' @importFrom stats pnorm
 .V <- function(h,k) {
     a <- k/h
     rho <- -a/sqrt(1+a^2)

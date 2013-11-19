@@ -2,7 +2,7 @@
 \alias{polygauss}
 \title{Calculate 2D Nodes and Weights of the Product Gauss Cubature}
 \usage{
-  polygauss(xy, nw_N, nw_M, alpha = NULL, rotation = FALSE)
+  polygauss(xy, nw_MN, alpha = NULL, rotation = FALSE)
 }
 \arguments{
   \item{xy}{list with elements \code{"x"} and \code{"y"}
@@ -11,10 +11,11 @@
   negative sign) with first vertex not repeated at the end
   (like \code{owin.object$bdry}).}
 
-  \item{nw_N,nw_M}{lists of nodes and weights of
+  \item{nw_MN}{unnamed list of nodes and weights of
   one-dimensional Gauss quadrature rules of degrees \eqn{N}
   and \eqn{M=N+1} (as returned by
-  \code{\link[statmod]{gauss.quad}})}
+  \code{\link[statmod]{gauss.quad}}): \code{list(s_M, w_M,
+  s_N, w_N)}.}
 
   \item{alpha}{base-line of the (rotated) polygon at \eqn{x
   = \alpha} (see Sommariva and Vianello (2007) for an

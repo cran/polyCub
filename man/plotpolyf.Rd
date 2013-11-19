@@ -1,6 +1,6 @@
 \name{plotpolyf}
 \alias{plotpolyf}
-\title{Plot Polygonal Domain on an Image of a Bivariate Function}
+\title{Plot Polygonal Domain on Image of Bivariate Function}
 \usage{
   plotpolyf(polyregion, f, ..., npixel = 100, cuts = 15,
     col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL,
@@ -49,16 +49,16 @@
 }
 \examples{
 ### a polygonal domain
-polycenter <- c(3,2)
-mypoly <- discpoly(center=polycenter, radius=5, npoly=5)
+data("letterR", package="spatstat")
 
 ### f: isotropic exponential decay
 fr <- function(r, rate=1) dexp(r, rate=rate)
-fcenter <- c(1,5)
+fcenter <- c(2,3)
 f <- function (s, rate=1) fr(sqrt(rowSums(t(t(s)-fcenter)^2)), rate=rate)
 
 ### plot
-plotpolyf(mypoly, f)
+plotpolyf(letterR, f, use.lattice=FALSE)
+plotpolyf(letterR, f, use.lattice=TRUE)
 }
 \author{
   Sebastian Meyer

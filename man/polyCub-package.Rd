@@ -26,7 +26,8 @@
   Gaussian density} over polygonal domains. It is based on
   formulae from Chapter 26 of the Abramowitz and Stegun
   (1970) handbook, i.e. triangulation of the polygonal
-  domain and appropriate evaluations of
+  domain (using \code{\link[gpclib]{tristrip}} of package
+  \pkg{gpclib}) and appropriate evaluations of
   \code{\link[mvtnorm]{pmvnorm}} from package
   \pkg{mvtnorm}. Note that there is also a function
   \code{\link{circleCub.Gauss}} to perform integration of

@@ -6,8 +6,12 @@
     Sigma = diag(2), plot = FALSE)
 }
 \arguments{
-  \item{polyregion}{anything coercible to a
-  \code{"\link[gpclib:gpc.poly-class]{gpc.poly}"} polygon.}
+  \item{polyregion}{a
+  \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} polygon or
+  something that can be coerced to this class, e.g., an
+  \code{"owin"} polygon (converted via
+  \code{\link{owin2gpc}} and -- given \pkg{rgeos} is
+  available -- \code{"SpatialPolygons"} also work.}
 
   \item{mean,Sigma}{mean and covariance matrix of the
   bivariate normal density to be integrated.}
