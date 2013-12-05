@@ -1,5 +1,5 @@
-1bdd28680d0bc25a29779a6c9082068e *DESCRIPTION
-168ffe59034e14808a8a00026c854186 *NAMESPACE
+7185f47a2a17ccb3d49e3bb6a513dcf9 *DESCRIPTION
+8202c3e1da5544d2a942dbef2a4072b3 *NAMESPACE
 88ac5e23078f7d92886d158a4e1b26e3 *R/circleCub.R
 b04c61543e6605e60891d4e76c595abb *R/coerce-gpc-methods.R
 6a6a7f50b84c23f2e1a5cd506d07d571 *R/coerce-sp-methods.R
@@ -9,10 +9,10 @@ b04c61543e6605e60891d4e76c595abb *R/coerce-gpc-methods.R
 1faf542239142da5bd04def658cc5b6f *R/polyCub.exact.Gauss.R
 29ee60f0b21f6d3bd2454727d646fc7e *R/polyCub.iso.R
 e3d0a263bb4df532538cdea06242adb6 *R/polyCub.midpoint.R
-ff38cefcd07a6623a26017849e43ce56 *R/tools.R
+5335433cc5a0930bd60ff00fe301fc76 *R/tools.R
 9f31cfae70eaaf800f1056718a7b5a14 *R/xylist.R
 2460ccad733adcb11684fb5a3150b7f6 *R/zzz.R
-204ce39741e99a5628c150386ea5d38e *inst/NEWS.Rd
+8a30d71be4f89aac7753fb0aa92cd01f *inst/NEWS.Rd
 a2e8c8c02633c62187d4b62c80ed7bde *inst/examples/plotpolyf.R
 e5804ff05c0c37610ad94d94759bfd32 *inst/examples/polyCub.R
 29eddb3f94b94e9b590fbd757aaba763 *inst/examples/polyCub.iso.R
