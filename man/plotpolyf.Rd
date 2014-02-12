@@ -2,9 +2,9 @@
 \alias{plotpolyf}
 \title{Plot Polygonal Domain on Image of Bivariate Function}
 \usage{
-  plotpolyf(polyregion, f, ..., npixel = 100, cuts = 15,
-    col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL,
-    ylim = NULL, use.lattice = TRUE)
+plotpolyf(polyregion, f, ..., npixel = 100, cuts = 15,
+  col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL, ylim = NULL,
+  use.lattice = TRUE, print.args = list())
 }
 \arguments{
   \item{npixel}{numeric vector of length 1 or 2 setting the
@@ -26,6 +26,13 @@
   graphics (\code{\link[lattice]{levelplot}}) should be
   used.}
 
+  \item{print.args}{a list of arguments passed to
+  \code{\link{print.trellis}} for plotting the produced
+  \code{\link[=trellis.object]{"trellis"}} object (given
+  \code{use.lattice = TRUE}). The latter will be returned
+  without explicit \code{print}ing if \code{print.args} is
+  not a list.}
+
   \item{polyregion}{a polygonal integration domain. The
   following classes are supported:
   \code{"\link[spatstat]{owin}"},
@@ -42,10 +49,10 @@
   \item{...}{further arguments for \code{f}.}
 }
 \description{
-  Produces a combined plot of a polygonal domain and an
-  image of a bivariate function, using either
-  \code{\link[lattice:levelplot]{lattice::levelplot}} or
-  \code{\link{image}}.
+Produces a combined plot of a polygonal domain and an image
+of a bivariate function, using either
+\code{\link[lattice:levelplot]{lattice::levelplot}} or
+\code{\link{image}}.
 }
 \examples{
 ### a polygonal domain
@@ -61,7 +68,7 @@ plotpolyf(letterR, f, use.lattice=FALSE)
 plotpolyf(letterR, f, use.lattice=TRUE)
 }
 \author{
-  Sebastian Meyer
+Sebastian Meyer
 }
 \keyword{hplot}
 

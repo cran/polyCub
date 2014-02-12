@@ -3,11 +3,11 @@
 \alias{polyCub.iso}
 \title{Cubature of Isotropic Functions over Polygonal Domains}
 \usage{
-  polyCub.iso(polyregion, f, intrfr, ..., center,
-    control = list(), check.intrfr = FALSE, plot = FALSE)
+polyCub.iso(polyregion, f, intrfr, ..., center, control = list(),
+  check.intrfr = FALSE, plot = FALSE)
 
-  .polyCub.iso(polys, intrfr, ..., center,
-    control = list(), .witherror = FALSE)
+.polyCub.iso(polys, intrfr, ..., center, control = list(),
+  .witherror = FALSE)
 }
 \arguments{
   \item{intrfr}{analytical antiderivative of \eqn{r f_r(r)}
@@ -59,31 +59,31 @@
   the numerical integration should be produced.}
 }
 \value{
-  The approximate integral of the isotropic function
-  \code{f} over \code{polyregion}.\cr If the \code{intrfr}
-  function is provided (which is assumed to be exact), an
-  upperbound for the absolute integration error is appended
-  to the result as attribute \code{"abs.error"}. It equals
-  the sum of the absolute errors reported by all
-  \code{\link{integrate}} calls (there is one for each edge
-  of \code{polyregion}).
+The approximate integral of the isotropic function \code{f}
+over \code{polyregion}.\cr If the \code{intrfr} function is
+provided (which is assumed to be exact), an upperbound for
+the absolute integration error is appended to the result as
+attribute \code{"abs.error"}. It equals the sum of the
+absolute errors reported by all \code{\link{integrate}}
+calls (there is one for each edge of \code{polyregion}).
 }
 \description{
-  Conducts numerical integration of a two-dimensional
-  isotropic function \eqn{f(x,y) =
-  f_r(||(x,y)-\boldsymbol{\mu}||)}{f(x,y) =
-  f_r(||(x,y)-\mu||)} with \eqn{\mu} being the center of
-  isotropy, over a polygonal domain. It internally solves a
-  line integral along the polygon boundary using
-  \code{\link{integrate}} where the integrand requires the
-  antiderivative of \eqn{r f_r(r)}), which ideally is
-  analytically available and supplied to the function as
-  argument \code{intrfr}. The two-dimensional integration
-  problem thereby reduces to an efficient adaptive
-  quadrature in one dimension.
+Conducts numerical integration of a two-dimensional
+isotropic function \eqn{f(x,y) =
+f_r(||(x,y)-\boldsymbol{\mu}||)}{f(x,y) =
+f_r(||(x,y)-\mu||)}, with \eqn{\mu} being the center of
+isotropy, over a polygonal domain. It internally solves a
+line integral along the polygon boundary using
+\code{\link{integrate}} where the integrand requires the
+antiderivative of \eqn{r f_r(r)}), which ideally is
+analytically available and supplied to the function as
+argument \code{intrfr}. The two-dimensional integration
+problem thereby reduces to an efficient adaptive quadrature
+in one dimension. See Meyer and Held (2014, Section 2.4 of
+Supplement B) for mathematical details.
 
-  \code{.polyCub.iso} is a \dQuote{bare-bone} version of
-  \code{polyCub.iso}.
+\code{.polyCub.iso} is a \dQuote{bare-bone} version of
+\code{polyCub.iso}.
 }
 \examples{
 ## we use the example polygon and f (exponential decay) from
@@ -104,26 +104,32 @@ stopifnot(all.equal(intISOana, intISOnum, check.attributes=FALSE))
 intrfr.const <- function (R) R^2/2
 (area.ISO <- polyCub.iso(letterR, intrfr=intrfr.const, center=c(0,0)))
 
-stopifnot(all.equal(spatstat::area.owin(letterR), area.ISO, check.attributes=FALSE))
-## the hole region is subtracted correctly
+stopifnot(all.equal(spatstat::area.owin(letterR),
+                    area.ISO,
+                    check.attributes=FALSE))
+## the hole is subtracted correctly
 }
 \author{
-  Sebastian Meyer
+Sebastian Meyer
 
-  The basic idea for this cubature rule is due to Emil
-  Hedevang (2013), Dept. of Mathematics, Aarhus University,
-  Denmark
+The basic mathematical formulation of this efficient
+integration for radially symmetric functions was
+ascertained with great support by Emil Hedevang (2013),
+Dept. of Mathematics, Aarhus University, Denmark.
 }
 \references{
-  E. Hedevang (2013). Personal communication at the Summer
-  School on Topics in Space-Time Modeling and Inference
-  (May 2013, Aalborg, Denmark).
+Hedevang, E. (2013). Personal communication at the Summer
+School on Topics in Space-Time Modeling and Inference (May
+2013, Aalborg, Denmark).
+
+Meyer, S. and Held, L. (2014). Power-law models for
+infectious disease spread. Available from
+\url{http://www.biostat.uzh.ch/research/manuscripts/powerlaw.html}.
 }
 \seealso{
-  Other polyCub.methods: \code{\link{polyCub}},
-  \code{\link{polyCub.SV}},
-  \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.midpoint}}
+Other polyCub.methods: \code{\link{polyCub.SV}};
+\code{\link{polyCub.exact.Gauss}};
+\code{\link{polyCub.midpoint}}; \code{\link{polyCub}}
 }
 \keyword{math}
 \keyword{spatial}

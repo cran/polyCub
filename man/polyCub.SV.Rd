@@ -2,8 +2,8 @@
 \alias{polyCub.SV}
 \title{Product Gauss Cubature over Polygonal Domains}
 \usage{
-  polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL,
-    rotation = FALSE, plot = FALSE)
+polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
+  plot = FALSE)
 }
 \arguments{
   \item{polyregion}{a polygonal integration domain. The
@@ -48,32 +48,33 @@
   guarantees that all nodes fall inside the polygon.}
 }
 \value{
-  The approximated value of the integral of \code{f} over
-  \code{polyregion}.
+The approximated value of the integral of \code{f} over
+\code{polyregion}.
 }
 \description{
-  Product Gauss cubature over polygons as proposed by
-  Sommariva and Vianello (2007).
+Product Gauss cubature over polygons as proposed by
+Sommariva and Vianello (2007).
 }
 \examples{
 # see example(polyCub)
 }
 \author{
-  Sebastian Meyer\cr The product Gauss cubature is based on
-  the original \acronym{MATLAB} implementation
-  \code{polygauss} by Sommariva and Vianello (2007), which
-  is available under the GNU GPL (>=2) license from
-  \url{http://www.math.unipd.it/~alvise/software.html}.
+Sebastian Meyer\cr The product Gauss cubature is based on
+the original \acronym{MATLAB} implementation
+\code{polygauss} by Sommariva and Vianello (2007), which is
+available under the GNU GPL (>=2) license from
+\url{http://www.math.unipd.it/~alvise/software.html}.
 }
 \references{
-  A. Sommariva and M. Vianello (2007). Product Gauss
-  cubature over polygons based on Green's integration
-  formula. Bit Numerical Mathematics, 47 (2), 441-453.
+A. Sommariva and M. Vianello (2007). Product Gauss cubature
+over polygons based on Green's integration formula. Bit
+Numerical Mathematics, 47 (2), 441-453.
 }
 \seealso{
-  Other polyCub.methods: \code{\link{.polyCub.iso}},
-  \code{\link{polyCub}}, \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
+Other polyCub.methods: \code{\link{.polyCub.iso}},
+\code{\link{polyCub.iso}};
+\code{\link{polyCub.exact.Gauss}};
+\code{\link{polyCub.midpoint}}; \code{\link{polyCub}}
 }
 \keyword{math}
 \keyword{spatial}

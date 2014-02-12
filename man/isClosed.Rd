@@ -2,18 +2,18 @@
 \alias{isClosed}
 \title{Check if Polygon is Closed}
 \usage{
-  isClosed(coords)
+isClosed(coords)
 }
 \arguments{
   \item{coords}{numeric coordinate matrix. It is
   interpreted by \code{\link{xy.coords}}.}
 }
 \value{
-  logical
+logical
 }
 \description{
-  Check if the first and last coordinates of a coordinate
-  matrix are identical.
+Check if the first and last coordinates of a coordinate
+matrix are identical.
 }
 \keyword{internal}
 \keyword{spatial}

@@ -1,7 +1,7 @@
 Package: polyCub
 Title: Cubature over Polygonal Domains
-Version: 0.4-1
-Date: 2013-12-05
+Version: 0.4-2
+Date: 2014-02-12
 Authors@R: c(person("Sebastian", "Meyer",
                     email = "Sebastian.Meyer@ifspm.uzh.ch",
                     role = c("aut","cre","trl")),
@@ -25,10 +25,10 @@ BugReports: https://github.com/WastlM/polyCub/issues
 Depends: R (>= 2.15.0), methods, sp
 Imports: grDevices, graphics, stats, spatstat, statmod
 Suggests: lattice, testthat, mvtnorm, rgeos, gpclib
-Packaged: 2013-12-05 14:17:44 UTC; sebastian
+Packaged: 2014-02-12 12:46:52 UTC; sebastian
 Author: Sebastian Meyer [aut, cre, trl],
   Michael Hoehle [ths]
 Maintainer: Sebastian Meyer <Sebastian.Meyer@ifspm.uzh.ch>
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-12-05 17:30:11
+Date/Publication: 2014-02-12 14:42:23

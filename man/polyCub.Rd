@@ -2,9 +2,8 @@
 \alias{polyCub}
 \title{Wrapper Function for the Various Cubature Methods}
 \usage{
-  polyCub(polyregion, f,
-    method = c("SV", "midpoint", "iso", "exact.Gauss"),
-    ..., plot = FALSE)
+polyCub(polyregion, f, method = c("SV", "midpoint", "iso", "exact.Gauss"),
+  ..., plot = FALSE)
 }
 \arguments{
   \item{polyregion}{a polygonal integration domain. The
@@ -34,13 +33,13 @@
   the numerical integration should be produced.}
 }
 \value{
-  The approximated integral of \code{f} over
-  \code{polyregion}.
+The approximated integral of \code{f} over
+\code{polyregion}.
 }
 \description{
-  Instead of calling one of the specific cubature methods
-  of this package, the wrapper function \code{polyCub} may
-  be used together with the \code{method} argument.
+Instead of calling one of the specific cubature methods of
+this package, the wrapper function \code{polyCub} may be
+used together with the \code{method} argument.
 }
 \examples{
 ### Short comparison of the different cubature methods
@@ -98,10 +97,10 @@ par(opar)
 polyCub.iso(disc.owin, f, center=c(0,0))   # see ?polyCub.iso
 }
 \seealso{
-  Other polyCub.methods: \code{\link{.polyCub.iso}},
-  \code{\link{polyCub.SV}},
-  \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
+Other polyCub.methods: \code{\link{.polyCub.iso}},
+\code{\link{polyCub.iso}}; \code{\link{polyCub.SV}};
+\code{\link{polyCub.exact.Gauss}};
+\code{\link{polyCub.midpoint}}
 }
 \keyword{math}
 \keyword{spatial}

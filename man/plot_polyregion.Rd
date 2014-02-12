@@ -2,7 +2,7 @@
 \alias{plot_polyregion}
 \title{Plots a Polygon (of Various Classes)}
 \usage{
-  plot_polyregion(polyregion, lwd = 2, add = FALSE)
+plot_polyregion(polyregion, lwd = 2, add = FALSE)
 }
 \arguments{
   \item{lwd}{line width.}
@@ -19,6 +19,6 @@
   internal \code{\link{xylist}} method).}
 }
 \description{
-  Plots a Polygon (of Various Classes)
+Plots a Polygon (of Various Classes)
 }
 

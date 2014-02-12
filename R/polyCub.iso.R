@@ -3,23 +3,24 @@
 ### Free software under the terms of the GNU General Public License, version 2,
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
-### Copyright (C) 2013 Sebastian Meyer
-### Time-stamp: <[polyCub.iso.R] by SM Don 07/11/2013 20:59 (CET)>
+### Copyright (C) 2013-2014 Sebastian Meyer
+### Time-stamp: <[polyCub.iso.R] by SM Mit 12/02/2014 11:48 (CET)>
 ################################################################################
 
 
 #' Cubature of Isotropic Functions over Polygonal Domains
 #'
 #' Conducts numerical integration of a two-dimensional isotropic function
-#' \eqn{f(x,y) = f_r(||(x,y)-\boldsymbol{\mu}||)}{f(x,y) = f_r(||(x,y)-\mu||)}
-#' with \eqn{\mu} being the center of isotropy,
-#' over a polygonal domain. 
+#' \eqn{f(x,y) = f_r(||(x,y)-\boldsymbol{\mu}||)}{f(x,y) = f_r(||(x,y)-\mu||)},
+#' with \eqn{\mu} being the center of isotropy, over a polygonal domain. 
 #' It internally solves a line integral along the polygon boundary using
 #' \code{\link{integrate}} where the integrand requires the antiderivative of
 #' \eqn{r f_r(r)}), which ideally is analytically available and supplied to the
 #' function as argument \code{intrfr}.
 #' The two-dimensional integration problem thereby reduces to an efficient
 #' adaptive quadrature in one dimension.
+#' See Meyer and Held (2014, Section 2.4 of Supplement B) for mathematical
+#' details.
 #'
 #' @inheritParams polyCub.SV
 #' @param intrfr analytical antiderivative of \eqn{r f_r(r)} from 0 to \code{R}
@@ -45,11 +46,17 @@
 #' (there is one for each edge of \code{polyregion}).
 #' @author Sebastian Meyer
 #' 
-#' The basic idea for this cubature rule is due to Emil Hedevang (2013),
-#' Dept. of Mathematics, Aarhus University, Denmark
+#' The basic mathematical formulation of this efficient integration for radially
+#' symmetric functions was ascertained with great support by
+#' Emil Hedevang (2013), Dept. of Mathematics, Aarhus University, Denmark.
 #' @references
-#' E. Hedevang (2013). Personal communication at the Summer School on Topics in
+#' Hedevang, E. (2013). Personal communication at the Summer School on Topics in
 #' Space-Time Modeling and Inference (May 2013, Aalborg, Denmark).
+#'
+#' Meyer, S. and Held, L. (2014).
+#' Power-law models for infectious disease spread.
+#' Available from
+#' \url{http://www.biostat.uzh.ch/research/manuscripts/powerlaw.html}.
 #' @keywords math spatial
 #' @family polyCub-methods
 #' @example inst/examples/polyCub.iso.R
@@ -62,42 +69,49 @@ polyCub.iso <- function (polyregion, f, intrfr, ..., center,
     polys <- xylist(polyregion) # transform to something like "owin$bdry"
                                 # which means anticlockwise vertex order with
                                 # first vertex not repeated
-    getError <- TRUE
-    doCheck <- !identical(FALSE, check.intrfr)
+    getError <- !missing(intrfr) # can't estimate error of double approximation
+
+    ## check 'intrfr' function
+    rs <- if (isTRUE(check.intrfr)) {
+        seq(1, max(abs(unlist(lapply(polys, "[", c("x","y"))))), length.out=20L)
+    } else if (identical(check.intrfr, FALSE)) {
+        numeric(0L)
+    } else check.intrfr
+    intrfr <- checkintrfr(intrfr, f, ..., center=center, rs=rs)
+
+    ## plot polygon and function image
+    if (plot) plotpolyf(polys, f, ...)
+    
+    ## do the cubature over all polygons of the 'polys' list
+    .polyCub.iso(polys, intrfr, ..., center=center,
+                 control=control, .witherror=getError)
+}
+
+## check the supplied 'intrfr' function
+checkintrfr <- function (intrfr, f, ..., center, rs = numeric(0L))
+{
+    doCheck <- length(rs) > 0L
     if (!missing(f)) {
         f <- match.fun(f)
         rfr <- function (r, ...) r * f(cbind(center[1]+r,center[2],deparse.level=0), ...)
         quadrfr1 <- function (r, ...) integrate(rfr, 0, r, ...)$value
         quadrfr <- function (r, ...) sapply(r, quadrfr1, ..., USE.NAMES=FALSE)
         if (missing(intrfr)) {
-            intrfr <- quadrfr
-            getError <- FALSE   # can't estimate error of double approximation
+            return(quadrfr)
         } else if (doCheck) {
             cat("Checking 'intrfr' against a numeric approximation ... ")
-            .rs <- if (isTRUE(check.intrfr)) {
-                seq(1, max(abs(unlist(lapply(polys, "[", c("x","y"))))),
-                    length.out=20)
-            } else {
-                stopifnot(is.vector(check.intrfr, mode="numeric"))
-                check.intrfr
-            }
-            ana <- intrfr(.rs, ...)
-            num <- quadrfr(.rs, ...)
-            cat(comp <- all.equal(num, ana), "\n")
-            if (!isTRUE(comp)) {
-                cat("->", comp, "\n")
+            stopifnot(is.vector(rs, mode="numeric"))
+            ana <- intrfr(rs, ...)
+            num <- quadrfr(rs, ...)
+            if (!isTRUE(comp <- all.equal(num, ana))) {
+                cat("\n->", comp, "\n")
                 warning("'intrfr' might be incorrect: ", comp)
-            }
+            } else cat("OK\n")
         }
     } else if (doCheck)
         stop("numerical verification of 'intrfr' requires 'f'")
-    intrfr <- match.fun(intrfr)
-
-    if (plot) plotpolyf(polys, f, ...)
     
-    ## do the cubature over all polygons of the 'polys' list
-    .polyCub.iso(polys, intrfr, ..., center=center,
-                 control=control, .witherror=getError)
+    match.fun(intrfr)
 }
 
 
@@ -128,7 +142,7 @@ polyCub1.iso <- function (poly, intrfr, ..., center, control, .witherror = TRUE)
     intedges <- erredges <- numeric(nedges)
     for (i in seq_len(nedges)) {
         v0 <- xy[i,] - center
-        v1 <- xy[if (i==nedges) 1 else i+1,] - center
+        v1 <- xy[if (i==nedges) 1L else i+1L,] - center
         int <- lineInt(v0, v1, intrfr, ..., control=control)
         intedges[i] <- int$value
         erredges[i] <- int$abs.error

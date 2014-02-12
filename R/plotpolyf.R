@@ -3,8 +3,8 @@
 ### Free software under the terms of the GNU General Public License, version 2,
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
-### Copyright (C) 2013 Sebastian Meyer
-### Time-stamp: <[plotpolyf.R] by SM Don 07/11/2013 20:57 (CET)>
+### Copyright (C) 2013-2014 Sebastian Meyer
+### Time-stamp: <[plotpolyf.R] by SM Die 14/01/2014 09:57 (CET)>
 ###
 ### Plot polygonal domain with image of bivariate function
 ################################################################################
@@ -27,6 +27,10 @@
 ##' \code{NULL} means using the bounding box of \code{polyregion}.
 ##' @param use.lattice logical indicating if \pkg{lattice} graphics
 ##' (\code{\link[lattice]{levelplot}}) should be used.
+##' @param print.args a list of arguments passed to \code{\link{print.trellis}}
+##' for plotting the produced \code{\link[=trellis.object]{"trellis"}} object
+##' (given \code{use.lattice = TRUE}). The latter will be returned without 
+##' explicit \code{print}ing if \code{print.args} is not a list.
 ##' @author Sebastian Meyer
 ##' @keywords hplot
 ##' @example inst/examples/plotpolyf.R
@@ -36,7 +40,7 @@
 
 plotpolyf <- function (polyregion, f, ...,
                        npixel=100, cuts=15, col=rev(heat.colors(cuts+1)), lwd=3,
-                       xlim=NULL, ylim=NULL, use.lattice=TRUE)
+                       xlim=NULL, ylim=NULL, use.lattice=TRUE, print.args=list())
 {
     polys <- xylist(polyregion)
     npixel <- rep(npixel, length.out=2)
@@ -51,7 +55,7 @@ plotpolyf <- function (polyregion, f, ...,
     xygrid <- expand.grid(x=xgrid, y=ygrid, KEEP.OUT.ATTRS=FALSE)
 
     ## compute function values on the grid
-    xygrid$fval <- f(xygrid, ...)
+    xygrid$fval <- f(as.matrix(xygrid, rownames.force = FALSE), ...)
 
     ## plot
     if (use.lattice && require("lattice")) {
@@ -59,8 +63,10 @@ plotpolyf <- function (polyregion, f, ...,
             panel.levelplot(...)
             lapply(polys, function(xy) panel.polygon(xy, lwd=lwd))
         }
-        print(levelplot(fval ~ x*y, data=xygrid, aspect="iso",
-                        cuts=cuts, col.regions=col, panel=mypanel))
+        trobj <- levelplot(fval ~ x*y, data=xygrid, aspect="iso",
+                           cuts=cuts, col.regions=col, panel=mypanel)
+        if (is.list(print.args))
+            do.call("print", c(alist(x=trobj), print.args)) else trobj
     } else {
         image(xgrid, ygrid, matrix(xygrid$fval, npixel[1], npixel[2]), col=col,
               xlab="x", ylab="y", asp=1)

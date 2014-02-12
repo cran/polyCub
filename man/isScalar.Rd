@@ -2,17 +2,17 @@
 \alias{isScalar}
 \title{Checks if Argument is Scalar}
 \usage{
-  isScalar(x)
+isScalar(x)
 }
 \arguments{
   \item{x}{any object}
 }
 \value{
-  logical
+logical
 }
 \description{
-  Check if the argument is scalar, i.e. a numeric vector of
-  length 1.
+Check if the argument is scalar, i.e. a numeric vector of
+length 1.
 }
 \keyword{internal}
 

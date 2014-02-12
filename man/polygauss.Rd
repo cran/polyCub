@@ -2,7 +2,7 @@
 \alias{polygauss}
 \title{Calculate 2D Nodes and Weights of the Product Gauss Cubature}
 \usage{
-  polygauss(xy, nw_MN, alpha = NULL, rotation = FALSE)
+polygauss(xy, nw_MN, alpha = NULL, rotation = FALSE)
 }
 \arguments{
   \item{xy}{list with elements \code{"x"} and \code{"y"}
@@ -36,13 +36,13 @@
   guarantees that all nodes fall inside the polygon.}
 }
 \description{
-  Calculate 2D Nodes and Weights of the Product Gauss
-  Cubature
+Calculate 2D Nodes and Weights of the Product Gauss
+Cubature
 }
 \references{
-  A. Sommariva and M. Vianello (2007): Product Gauss
-  cubature over polygons based on Green's integration
-  formula. Bit Numerical Mathematics, 47 (2), 441-453.
+A. Sommariva and M. Vianello (2007): Product Gauss cubature
+over polygons based on Green's integration formula. Bit
+Numerical Mathematics, 47 (2), 441-453.
 }
 \keyword{internal}
 
