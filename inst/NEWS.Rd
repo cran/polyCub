@@ -5,6 +5,27 @@
 \title{News for Package 'polyCub'}
 
 
+\section{Changes in polyCub version 0.4-3 (2014-03-14)}{
+
+  \itemize{
+    \item \code{polyCub.iso()} ...
+    \itemize{
+      \item could not handle additional arguments for
+      \code{integrate()} given in the \code{control} list.
+    
+      \item applies the \code{control} arguments also
+      to the numerical approximation of \code{intrfr}.
+    }
+    
+    \item The \code{checkintrfr()} function is exported and documented.
+
+    \item Added a \file{CITATION} file.
+  }
+  
+}
+
+
+
 \section{Changes in polyCub version 0.4-2 (2014-02-12)}{
 
   \itemize{

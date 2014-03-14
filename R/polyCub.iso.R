@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2013-2014 Sebastian Meyer
-### Time-stamp: <[polyCub.iso.R] by SM Mit 12/02/2014 11:48 (CET)>
+### Time-stamp: <[polyCub.iso.R] by SM Fre 14/03/2014 14:31 (CET)>
 ################################################################################
 
 
@@ -25,16 +25,16 @@
 #' @inheritParams polyCub.SV
 #' @param intrfr analytical antiderivative of \eqn{r f_r(r)} from 0 to \code{R}
 #' (first argument, not necessarily named \code{"R"}, must be vectorized).
-#' If given, \code{f} is not required (except for plotting)!
-#' If missing, \code{intrfr} is approximated numerically, again using
-#' \code{\link{integrate}}.
+#' If missing, \code{intrfr} is approximated numerically using
+#' \code{\link{integrate}} configured with \code{control}.
 #' @param ... further arguments for \code{f} or \code{intrfr}.
 #' @param center numeric vector of length 2, the center of isotropy.
 #' @param control list of arguments passed to \code{\link{integrate}}, the
 #' quadrature rule used for the line integral along the polygon boundary.
 #' @param check.intrfr logical (or numeric vector) indicating if
 #' (for which \code{r}'s) the supplied \code{intrfr} function should be
-#' checked against a numeric approximation. If \code{TRUE}, the set of test
+#' checked against a numeric approximation. This check requires \code{f}
+#' to be specified. If \code{TRUE}, the set of test
 #' \code{r}'s defaults to a \code{\link{seq}} of length 20 from 1 to
 #' the maximum absolute x or y coordinate of any edge of the \code{polyregion}.
 #' @return The approximate integral of the isotropic function
@@ -55,7 +55,9 @@
 #'
 #' Meyer, S. and Held, L. (2014).
 #' Power-law models for infectious disease spread.
-#' Available from
+#' Revised for the \emph{Annals of Applied Statistics}.
+#' \href{http://arxiv.org/abs/1308.5115}{arXiv:1308.5115}.
+#' Supplements are available from
 #' \url{http://www.biostat.uzh.ch/research/manuscripts/powerlaw.html}.
 #' @keywords math spatial
 #' @family polyCub-methods
@@ -77,7 +79,7 @@ polyCub.iso <- function (polyregion, f, intrfr, ..., center,
     } else if (identical(check.intrfr, FALSE)) {
         numeric(0L)
     } else check.intrfr
-    intrfr <- checkintrfr(intrfr, f, ..., center=center, rs=rs)
+    intrfr <- checkintrfr(intrfr, f, ..., center=center, control=control, rs=rs)
 
     ## plot polygon and function image
     if (plot) plotpolyf(polys, f, ...)
@@ -87,23 +89,48 @@ polyCub.iso <- function (polyregion, f, intrfr, ..., center,
                  control=control, .witherror=getError)
 }
 
-## check the supplied 'intrfr' function
-checkintrfr <- function (intrfr, f, ..., center, rs = numeric(0L))
+
+##' Check the Integral of \eqn{r f_r(r)}
+##'
+##' This function is auxiliary to \code{\link{polyCub.iso}}.
+##' The (analytical) integral of \eqn{r f_r(r)} from 0 to \eqn{R} is checked
+##' against a numeric approximation using \code{\link{integrate}} for various
+##' values of the upper bound \eqn{R}. A warning is issued if inconsistencies
+##' are found.
+##'
+##' @inheritParams polyCub.iso
+##' @param rs numeric vector of upper bounds for which to check the validity of
+##' \code{intrfr}. If it has length 0, no checks are performed.
+##' @param tolerance of \code{\link{all.equal.numeric}} when comparing
+##' \code{intrfr} results with numerical integration. Defaults to the
+##' relative tolerance used for \code{integrate}.
+##' @return The \code{intrfr} function. If it was not supplied, its quadrature
+##' version using \code{integrate} is returned.
+##' @importFrom stats integrate
+##' @export
+checkintrfr <- function (intrfr, f, ..., center, control = list(),
+                         rs = numeric(0L), tolerance = control$rel.tol)
 {
     doCheck <- length(rs) > 0L
     if (!missing(f)) {
         f <- match.fun(f)
-        rfr <- function (r, ...) r * f(cbind(center[1]+r,center[2],deparse.level=0), ...)
+        rfr <- function (r, ...)
+            r * f(cbind(center[1]+r, center[2], deparse.level=0), ...)
         quadrfr1 <- function (r, ...) integrate(rfr, 0, r, ...)$value
+        if (length(control))
+            body(quadrfr1)[[2]] <- as.call(c(as.list(body(quadrfr1)[[2]]),
+                                             control))
         quadrfr <- function (r, ...) sapply(r, quadrfr1, ..., USE.NAMES=FALSE)
         if (missing(intrfr)) {
             return(quadrfr)
         } else if (doCheck) {
             cat("Checking 'intrfr' against a numeric approximation ... ")
             stopifnot(is.vector(rs, mode="numeric"))
+            if (is.null(tolerance))
+                tolerance <- eval(formals(integrate)$rel.tol)
             ana <- intrfr(rs, ...)
             num <- quadrfr(rs, ...)
-            if (!isTRUE(comp <- all.equal(num, ana))) {
+            if (!isTRUE(comp <- all.equal(num, ana, tolerance=tolerance))) {
                 cat("\n->", comp, "\n")
                 warning("'intrfr' might be incorrect: ", comp)
             } else cat("OK\n")
@@ -135,7 +162,8 @@ checkintrfr <- function (intrfr, f, ..., center, rs = numeric(0L))
 }
 
 ## cubature method for a single polygon
-polyCub1.iso <- function (poly, intrfr, ..., center, control, .witherror = TRUE)
+polyCub1.iso <- function (poly, intrfr, ..., center,
+                          control = list(), .witherror = TRUE)
 {
     xy <- cbind(poly[["x"]], poly[["y"]], deparse.level=0)
     nedges <- nrow(xy)
@@ -157,7 +185,7 @@ polyCub1.iso <- function (poly, intrfr, ..., center, control, .witherror = TRUE)
 
 ## line integral for one edge
 ##' @importFrom stats integrate
-lineInt <- function (v0, v1, intrfr, ..., control)
+lineInt <- function (v0, v1, intrfr, ..., control = list())
 {
     d <- v1 - v0
     num <- v1[2]*v0[1] - v1[1]*v0[2]  # = d[2]*p[,1] - d[1]*p[,2]
@@ -171,13 +199,13 @@ lineInt <- function (v0, v1, intrfr, ..., control)
         num * ints / norm2
     }
     if (length(control)) {              # use slower do.call()-construct
-        do.call("integrate", c(list(integrand, 0, 1), control=control))
+        do.call("integrate", c(list(integrand, 0, 1), control))
     } else integrate(integrand, 0, 1)
 }
 
 ## equally fast method _only_ for convex polygonal domains including the origin
 ## (formula obtained via polar coordinate representation)
-lineInt2 <- function (v0, v1, intrfr, ..., control)
+lineInt2 <- function (v0, v1, intrfr, ..., control = list())
 {
     d <- v1 - v0
     ld <- vecnorm(d)
@@ -191,5 +219,5 @@ lineInt2 <- function (v0, v1, intrfr, ..., control)
         r <- num / sin(theta+phi)
         intrfr(r, ...)
     }
-    do.call("integrate", c(list(integrand, 0, phispan, ...), control=control))
+    do.call("integrate", c(list(integrand, 0, phispan, ...), control))
 }
