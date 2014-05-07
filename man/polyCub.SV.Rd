@@ -3,7 +3,7 @@
 \title{Product Gauss Cubature over Polygonal Domains}
 \usage{
 polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
-  plot = FALSE)
+  engine = "C", plot = FALSE)
 }
 \arguments{
   \item{polyregion}{a polygonal integration domain. The
@@ -24,7 +24,9 @@ polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
   \item{nGQ}{degree of the one-dimensional Gauss-Legendre
   quadrature rule (default: 20). See
   \code{\link[statmod]{gauss.quad}} in package
-  \pkg{statmod}, on which this function depends.}
+  \pkg{statmod}. The nodes and weights up to degree 60 are
+  cached in \pkg{polyCub}, for larger degrees \pkg{statmod}
+  is required.}
 
   \item{plot}{logical indicating if an illustrative plot of
   the numerical integration should be produced.}
@@ -46,6 +48,22 @@ polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
   \code{"Q"}, which are farthest apart (see Sommariva and
   Vianello, 2007). For convex polygons, this rotation
   guarantees that all nodes fall inside the polygon.}
+
+  \item{engine}{character string specifying the
+  implementation to use. Up to polyCub version 0.4-3, the
+  two-dimensional nodes and weights were computed by R
+  functions and these are still available by setting
+  \code{engine = "R"}. The new C-implementation is now the
+  default (\code{engine = "C"}) and requires approximately
+  30\% less computation time.\cr The special setting
+  \code{engine = "C+reduce"} will discard redundant nodes
+  at (0,0) with zero weight resulting from edges on the
+  base-line \eqn{x = \alpha} or orthogonal to it. This
+  extra cleaning is only worth its cost for computationally
+  intensive functions \code{f} over polygons which really
+  have some edges on the baseline or parallel to the
+  x-axis.  Note that the old \R implementation does not
+  have such unset zero nodes and weights.}
 }
 \value{
 The approximated value of the integral of \code{f} over

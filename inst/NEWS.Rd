@@ -5,6 +5,25 @@
 \title{News for Package 'polyCub'}
 
 
+\section{Changes in polyCub version 0.5-0 (2014-05-07)}{
+
+  \itemize{
+    \item \code{polyCub.SV()} gained an argument \code{engine} to choose
+    among available implementations. The new and faster C-implementation
+    is the default. There should not be any numerical differences in the
+    result of the cubature.
+
+    \item Package \CRANpkg{statmod} is no longer strictly required
+    (imported). Nodes and weights for Gauss-Legendre quadrature in
+    \code{polyCub.SV()} are now cached in the \pkg{polyCub} package
+    up to \code{nGQ=60}. \pkg{statmod}\code{::gauss.quad} is only
+    queried for a higher number of nodes.
+  }
+  
+}
+
+
+
 \section{Changes in polyCub version 0.4-3 (2014-03-14)}{
 
   \itemize{
