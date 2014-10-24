@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2013-2014 Sebastian Meyer
-### Time-stamp: <[plotpolyf.R] by SM Die 14/01/2014 09:57 (CET)>
+### Time-stamp: <[plotpolyf.R] 2014-09-27 14:39 (CEST) by SM>
 ###
 ### Plot polygonal domain with image of bivariate function
 ################################################################################
@@ -16,7 +16,17 @@
 ##' function, using either \code{\link[lattice:levelplot]{lattice::levelplot}}
 ##' or \code{\link{image}}.
 ##' 
-##' @inheritParams polyCub.SV
+##' @param polyregion a polygonal domain.
+##' The following classes are supported: \code{"\link[spatstat]{owin}"},
+##' \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"},
+##' \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
+##' and \code{"\linkS4class{Polygon}"}
+##' (for these we have an internal \code{\link{xylist}} method).
+##' @param f a two-dimensional real function.
+##' As its first argument it must take a coordinate matrix, i.e., a
+##' numeric matrix with two columns, and it must return a numeric vector of
+##' length the number of coordinates.
+##' @param ... further arguments for \code{f}.
 ##' @param npixel numeric vector of length 1 or 2 setting the number of pixels
 ##' in each dimension.
 ##' @param cuts number of cut points in the \eqn{z} dimension.
@@ -58,15 +68,16 @@ plotpolyf <- function (polyregion, f, ...,
     xygrid$fval <- f(as.matrix(xygrid, rownames.force = FALSE), ...)
 
     ## plot
-    if (use.lattice && require("lattice")) {
+    if (use.lattice && requireNamespace("lattice")) {
         mypanel <- function(...) {
-            panel.levelplot(...)
-            lapply(polys, function(xy) panel.polygon(xy, lwd=lwd))
+            lattice::panel.levelplot(...)
+            lapply(polys, function(xy) lattice::panel.polygon(xy, lwd=lwd))
         }
-        trobj <- levelplot(fval ~ x*y, data=xygrid, aspect="iso",
-                           cuts=cuts, col.regions=col, panel=mypanel)
-        if (is.list(print.args))
-            do.call("print", c(alist(x=trobj), print.args)) else trobj
+        trobj <- lattice::levelplot(fval ~ x*y, data=xygrid, aspect="iso",
+                                    cuts=cuts, col.regions=col, panel=mypanel)
+        if (is.list(print.args)) {
+            do.call("print", c(alist(x=trobj), print.args))
+        } else trobj
     } else {
         image(xgrid, ygrid, matrix(xygrid$fval, npixel[1], npixel[2]), col=col,
               xlab="x", ylab="y", asp=1)

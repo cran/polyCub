@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2009-2014 Sebastian Meyer
-### Time-stamp: <[tools.R] by SM Die 06/05/2014 10:18 (CEST)>
+### Time-stamp: <[tools.R] 2014-09-27 10:59 (CEST) by SM>
 ###
 ### Tiny toolbox of internal function
 ################################################################################
@@ -55,10 +55,9 @@ isScalar <- function (x) {
 }
 
 
-##' Plots a Polygon (of Various Classes)
+##' Plots a Polygonal Domain (of Various Classes)
 ##'
-##' @inheritParams polyCub.SV
-##' @param lwd line width.
+##' @inheritParams plotpolyf
 ##' @param add logical. Add to existing plot?
 ##' @import methods
 ##' @import sp
@@ -71,7 +70,8 @@ plot_polyregion <- function (polyregion, lwd=2, add=FALSE)
 {
     if (is.vector(polyregion, mode="list")) { # internal xylist object
         stopifnot(add)
-        lapply(polyregion, function(xy) polygon(xy, lwd=lwd))
+        lapply(polyregion, polygon, lwd=lwd)
+        invisible()
     } else if (inherits(polyregion, "gpc.poly")) {
         if (!isClass("gpc.poly")) library("rgeos") # probably redundant
         plot(polyregion, poly.args=list(lwd=lwd), ann=FALSE, add=add)
@@ -80,6 +80,7 @@ plot_polyregion <- function (polyregion, lwd=2, add=FALSE)
             polyregion <- Polygons(list(polyregion), "ID")
         if (inherits(polyregion, "Polygons"))
             polyregion <- SpatialPolygons(list(polyregion))
+        ## plot call which works for "SpatialPolygons" and "owin"
         plot(polyregion, lwd=lwd, axes=TRUE, main="", add=add)
     }
 }

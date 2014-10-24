@@ -4,48 +4,74 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2009-2014 Sebastian Meyer
-### Time-stamp: <[polyCub.SV.R] by SM Mit 07/05/2014 14:09 (CEST)>
+### Time-stamp: <[polyCub.SV.R] 2014-09-27 14:10 (CEST) by SM>
 ################################################################################
 
 
-#' Product Gauss Cubature over Polygonal Domains
-#'
-#' Product Gauss cubature over polygons as proposed by
-#' Sommariva and Vianello (2007).
-#' 
-#' @param polyregion a polygonal integration domain.
-#' The following classes are supported: \code{"\link[spatstat]{owin}"},
-#' \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"},
-#' \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
-#' and \code{"\linkS4class{Polygon}"}
-#' (for these we have an internal \code{\link{xylist}} method).
-#' @param f two-dimensional function.
-#' As its first argument it must take a coordinate matrix, i.e. a
-#' numeric matrix with two columns.
-#' @param ... further arguments for \code{f}.
-#' @param nGQ degree of the one-dimensional Gauss-Legendre quadrature rule
-#' (default: 20). See \code{\link[statmod]{gauss.quad}} in package
-#' \pkg{statmod}. The nodes and weights up to degree 60 are cached in
-#' \pkg{polyCub}, for larger degrees \pkg{statmod} is required.
-#' @param plot logical indicating if an illustrative plot of the numerical
-#' integration should be produced.
-#' @inheritParams polygauss
-#' @return The approximated value of the integral of \code{f} over
-#' \code{polyregion}.
-#' @author Sebastian Meyer\cr
-#' The product Gauss cubature is based on the
-#' original \acronym{MATLAB} implementation \code{polygauss} by Sommariva and
-#' Vianello (2007), which is available under the GNU GPL (>=2) license from
-#' \url{http://www.math.unipd.it/~alvise/software.html}.
-#' @references
-#' Sommariva, A. and Vianello, M. (2007).
-#' Product Gauss cubature over polygons based on Green's integration formula.
-#' \emph{Bit Numerical Mathematics}, \bold{47} (2), 441-453.
-#' @keywords math spatial
-#' @family polyCub-methods
-#' @importFrom graphics points
-#' @examples # see example(polyCub)
-#' @export
+##' Product Gauss Cubature over Polygonal Domains
+##'
+##' Product Gauss cubature over polygons as proposed by
+##' Sommariva and Vianello (2007).
+##'
+##' @inheritParams plotpolyf
+##' @param f a two-dimensional real function (or \code{NULL} to only compute
+##' nodes and weights).
+##' As its first argument it must take a coordinate matrix, i.e., a
+##' numeric matrix with two columns, and it must return a numeric vector of
+##' length the number of coordinates.
+##' @param nGQ degree of the one-dimensional Gauss-Legendre quadrature rule
+##' (default: 20) as implemented in function \code{\link[statmod]{gauss.quad}}
+##' of package \pkg{statmod}. Nodes and weights up to \code{nGQ=60} are cached
+##' in \pkg{polyCub}, for larger degrees \pkg{statmod} is required.
+##' @param alpha base-line of the (rotated) polygon at \eqn{x = \alpha} (see
+##' Sommariva and Vianello (2007) for an explication). If \code{NULL} (default),
+##' the midpoint of the x-range of each polygon is chosen if no \code{rotation}
+##' is performed, and otherwise the \eqn{x}-coordinate of the rotated point
+##' \code{"P"} (see \code{rotation}). If \code{f} has its maximum value at the
+##' origin \eqn{(0,0)}, e.g., the bivariate Gaussian density with zero mean,
+##' \code{alpha = 0} is a reasonable choice.
+##' @param rotation logical (default: \code{FALSE}) or a list of points
+##' \code{"P"} and \code{"Q"} describing the preferred direction. If
+##' \code{TRUE}, the polygon is rotated according to the vertices \code{"P"} and
+##' \code{"Q"}, which are farthest apart (see Sommariva and Vianello, 2007). For
+##' convex polygons, this rotation guarantees that all nodes fall inside the
+##' polygon.
+##' @param engine character string specifying the implementation to use.
+##' Up to \pkg{polyCub} version 0.4-3, the two-dimensional nodes and weights 
+##' were computed by \R functions and these are still available by setting
+##' \code{engine = "R"}.
+##' The new C-implementation is now the default (\code{engine = "C"}) and 
+##' requires approximately 30\% less computation time.\cr
+##' The special setting \code{engine = "C+reduce"} will discard redundant nodes
+##' at (0,0) with zero weight resulting from edges on the base-line
+##' \eqn{x = \alpha} or orthogonal to it. 
+##' This extra cleaning is only worth its cost for computationally intensive
+##' functions \code{f} over polygons which really have some edges on the
+##' baseline or parallel to the x-axis.  Note that the old \R
+##' implementation does not have such unset zero nodes and weights.
+##' @param plot logical indicating if an illustrative plot of the numerical
+##' integration should be produced.
+##' @return The approximated value of the integral of \code{f} over
+##' \code{polyregion}.\cr
+##' In the case \code{f = NULL}, only the computed nodes and weights are
+##' returned in a list of length the number of polygons of \code{polyregion},
+##' where each component is a list with \code{nodes} (a numeric matrix with
+##' two columns), \code{weights} (a numeric vector of length
+##' \code{nrow(nodes)}), the rotation \code{angle}, and \code{alpha}.
+##' @author Sebastian Meyer\cr
+##' The product Gauss cubature is based on the
+##' original \acronym{MATLAB} implementation \code{polygauss} by Sommariva and
+##' Vianello (2007), which is available under the GNU GPL (>=2) license from
+##' \url{http://www.math.unipd.it/~alvise/software.html}.
+##' @references
+##' Sommariva, A. and Vianello, M. (2007).
+##' Product Gauss cubature over polygons based on Green's integration formula.
+##' \emph{Bit Numerical Mathematics}, \bold{47} (2), 441-453.
+##' @keywords math spatial
+##' @family polyCub-methods
+##' @importFrom graphics points
+##' @examples # see example(polyCub)
+##' @export
 
 polyCub.SV <- function (polyregion, f, ...,
                         nGQ = 20, alpha = NULL, rotation = FALSE, engine = "C",
@@ -54,7 +80,6 @@ polyCub.SV <- function (polyregion, f, ...,
     polys <- xylist(polyregion) # transform to something like "owin$bdry"
                                 # which means anticlockwise vertex order with
                                 # first vertex not repeated
-    f <- match.fun(f)
     stopifnot(isScalar(nGQ), nGQ > 0,
               is.null(alpha) || (isScalar(alpha) && !is.na(alpha)))
 
@@ -63,8 +88,15 @@ polyCub.SV <- function (polyregion, f, ...,
     nw_N <- gauss.quad(nGQ)
     ## DEGREE "M" = N+1 (ORDER GAUSS INTEGRATION)
     nw_M <- gauss.quad(nGQ + 1)
+
+    ## Special case f=NULL: compute and return nodes and weights only
+    if (is.null(f)) {
+        return(lapply(X = polys, FUN = polygauss, nw_MN = c(nw_M, nw_N),
+                      alpha = alpha, rotation = rotation, engine = engine))
+    }
     
-    ## Cubature of every single polygon of the "polys" list
+    ## Cubature over every single polygon of the "polys" list
+    f <- match.fun(f)
     int1 <- function (poly) {
         nw <- polygauss(poly, c(nw_M, nw_N), alpha, rotation, engine)
         fvals <- f(nw$nodes, ...)
@@ -82,7 +114,7 @@ polyCub.SV <- function (polyregion, f, ...,
     if (plot) {
         plotpolyf(polys, f, ..., use.lattice=FALSE)
         for (i in seq_along(polys)) {
-            nw <- polygauss(polys[[i]], c(nw_M, nw_N), alpha, rotation)
+            nw <- polygauss(polys[[i]], c(nw_M, nw_N), alpha, rotation, engine)
             points(nw$nodes, cex=0.6, pch = i) #, col=1+(nw$weights<=0)
         }
     }
@@ -95,13 +127,12 @@ polyCub.SV <- function (polyregion, f, ...,
 ## unname(statmod::gauss.quad(n, kind="legendre"))
 gauss.quad <- function (n)
 {
-    if (n <= 60) { # results cached in R/sysdata.rda
+    if (n <= 61) { # results cached in R/sysdata.rda
         .NWGL[[n]]
     } else if (requireNamespace("statmod")) {
         unname(statmod::gauss.quad(n = n, kind = "legendre"))
     } else {
-        stop("package ", sQuote("statmod"),
-             " is required for more than 60 quadrature nodes")
+        stop("package ", sQuote("statmod"), " is required for nGQ > 60")
     }
 }
 
@@ -115,31 +146,7 @@ gauss.quad <- function (n)
 ##' @param nw_MN unnamed list of nodes and weights of one-dimensional Gauss
 ##' quadrature rules of degrees \eqn{N} and \eqn{M=N+1} (as returned by
 ##' \code{\link[statmod]{gauss.quad}}): \code{list(s_M, w_M, s_N, w_N)}.
-##' @param alpha base-line of the (rotated) polygon at \eqn{x = \alpha} (see
-##' Sommariva and Vianello (2007) for an explication). If \code{NULL} (default),
-##' the midpoint of the x-range of the polygon is chosen if no \code{rotation}
-##' is performed, and otherwise the \eqn{x}-coordinate of the rotated point
-##' \code{"P"}. If \code{f} has its maximum value at the origin \eqn{(0,0)},
-##' e.g., the bivariate Gaussian density with zero mean, \code{alpha = 0} is a
-##' reasonable choice.
-##' @param rotation logical (default: \code{FALSE}) or a list of points
-##' \code{"P"} and \code{"Q"} describing the preferred direction. If
-##' \code{TRUE}, the polygon is rotated according to the vertices \code{"P"} and
-##' \code{"Q"}, which are farthest apart (see Sommariva and Vianello, 2007). For
-##' convex polygons, this rotation guarantees that all nodes fall inside the
-##' polygon.
-##' @param engine character string specifying the implementation to use. Up to
-##' polyCub version 0.4-3, the two-dimensional nodes and weights were computed
-##' by R functions and these are still available by setting \code{engine = "R"}.
-##' The new C-implementation is now the default (\code{engine = "C"}) and 
-##' requires approximately 30\% less computation time.\cr
-##' The special setting \code{engine = "C+reduce"} will discard redundant nodes
-##' at (0,0) with zero weight resulting from edges on the base-line
-##' \eqn{x = \alpha} or orthogonal to it. 
-##' This extra cleaning is only worth its cost for computationally intensive
-##' functions \code{f} over polygons which really have some edges on the
-##' baseline or parallel to the x-axis.  Note that the old \R
-##' implementation does not have such unset zero nodes and weights.
+##' @inheritParams polyCub.SV
 ##' @references
 ##' Sommariva, A. and Vianello, M. (2007):
 ##' Product Gauss cubature over polygons based on Green's integration formula.

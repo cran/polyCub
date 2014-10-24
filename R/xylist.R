@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2012-2014 Sebastian Meyer
-### Time-stamp: <[xylist.R] by SM Mon 24/02/2014 10:53 (CET)>
+### Time-stamp: <[xylist.R] 2014-10-23 09:49 (CEST) by SM>
 ###
 ### Convert various polygon classes to a simple "xylist"
 ################################################################################
@@ -57,49 +57,42 @@
 ##' \code{"owin"} convention (anticlockwise order without repeating any vertex).
 ##' The opposite vertex order can be retained for the \pkg{sp}-classes
 ##' by the non-default use with \code{reverse=FALSE}.
-##' @author Sebastian Meyer\cr
-##' The implementation of the \code{"gpc.poly"}-method of \code{xylist}
-##' depends on functionality of the \pkg{spatstat} package and borrows
-##' large parts from the function \code{gpc2owin} (as implemented in package
-##' \pkg{spatstat} before version 1.34-0, when support for \code{"gpc.poly"} was
-##' dropped) authored by Adrian Baddeley and Rolf Turner.
+##' @author Sebastian Meyer
 ##' @name xylist
 ##' @keywords spatial methods
 ##' @export
 xylist <- function (object, ...) UseMethod("xylist")
 
-##' @S3method xylist owin
 ##' @rdname xylist
 ##' @importFrom spatstat as.polygonal
-xylist.owin <- function (object, ...) as.polygonal(object)$bdry
-
-##' @S3method xylist gpc.poly
-##' @rdname xylist
-##' @importFrom spatstat area.xypolygon reverse.xypolygon
-xylist.gpc.poly <- function (object, ...)
+##' @export
+xylist.owin <- function (object, ...)
 {
-    lapply(object@pts, function (poly) {
-        if (poly$hole != (area.xypolygon(poly) < 0))
-            poly <- reverse.xypolygon(poly)
-        poly[c("x","y")]
-    })
+    as.polygonal(object)$bdry
 }
 
-##' @S3method xylist SpatialPolygons
+##' @rdname xylist
+##' @export
+xylist.gpc.poly <- function (object, ...)
+{
+    xylist.owin(gpc2owin(object, check = FALSE))
+}
+
 ##' @rdname xylist
 ##' @inheritParams xylist.Polygons
+##' @export
 xylist.SpatialPolygons <- function (object, reverse = TRUE, ...)
 {
     unlist(lapply(object@polygons, xylist.Polygons, reverse=reverse, ...),
            recursive=FALSE, use.names=FALSE)
 }
 
-##' @S3method xylist Polygons
 ##' @rdname xylist
 ##' @param reverse logical (\code{TRUE}) indicating if the vertex order of the
 ##' \pkg{sp} classes should be reversed to get the \code{xylist}/\code{owin}
 ##' convention.
 ##' @import sp
+##' @export
 xylist.Polygons <- function (object, reverse = TRUE, ...)
 {
     lapply(object@Polygons, function (sr) {
@@ -111,15 +104,15 @@ xylist.Polygons <- function (object, reverse = TRUE, ...)
     })
 }
 
-##' @S3method xylist Polygon
 ##' @rdname xylist
 ##' @import methods
+##' @export
 xylist.Polygon <- function (object, reverse = TRUE, ...)
     xylist.Polygons(as(object,"Polygons"), reverse=reverse, ...)
 
-##' @S3method xylist default
 ##' @rdname xylist
 ##' @importFrom grDevices xy.coords
+##' @export
 xylist.default <- function (object, ...) {
     lapply(object, function (xy) {
         poly <- xy.coords(xy)[c("x","y")]

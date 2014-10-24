@@ -5,6 +5,24 @@
 \title{News for Package 'polyCub'}
 
 
+\section{Changes in polyCub version 0.5-1 (2014-10-24)}{
+
+  \itemize{
+    \item Nodes and weights for \code{polyCub.SV()} were only cached
+    up to \code{nGQ=59}, not 60 as announced in version 0.5-0. Fixed
+    that which also makes examples truly run without \pkg{statmod}.
+
+    \item In \code{polyCub.SV()}, the new special setting
+    \code{f=NULL} means to only compute nodes and weights.
+
+    \item Internal changes to the \code{"gpc.poly"} converters
+    to accommodate \CRANpkg{spatstat} 1.39-0.
+  }
+  
+}
+
+
+
 \section{Changes in polyCub version 0.5-0 (2014-05-07)}{
 
   \itemize{

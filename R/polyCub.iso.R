@@ -4,7 +4,7 @@
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
 ### Copyright (C) 2013-2014 Sebastian Meyer
-### Time-stamp: <[polyCub.iso.R] by SM Mit 07/05/2014 10:29 (CEST)>
+### Time-stamp: <[polyCub.iso.R] 2014-10-24 11:11 (CEST) by SM>
 ################################################################################
 
 
@@ -19,10 +19,10 @@
 #' function as argument \code{intrfr}.
 #' The two-dimensional integration problem thereby reduces to an efficient
 #' adaptive quadrature in one dimension.
-#' See Meyer and Held (2014, Section 2.4 of Supplement B) for mathematical
+#' See Meyer and Held (2014, Supplement B, Section 2.4) for mathematical
 #' details.
 #'
-#' @inheritParams polyCub.SV
+#' @inheritParams plotpolyf
 #' @param intrfr analytical antiderivative of \eqn{r f_r(r)} from 0 to \code{R}
 #' (first argument, not necessarily named \code{"R"}, must be vectorized).
 #' If missing, \code{intrfr} is approximated numerically using
@@ -37,6 +37,9 @@
 #' to be specified. If \code{TRUE}, the set of test
 #' \code{r}'s defaults to a \code{\link{seq}} of length 20 from 1 to
 #' the maximum absolute x or y coordinate of any edge of the \code{polyregion}.
+#' @param plot logical indicating if an image of the function should be plotted
+#' together with the polygonal domain, i.e.,
+#' \code{\link{plotpolyf}(polyregion, f, \dots)}.
 #' @return The approximate integral of the isotropic function
 #' \code{f} over \code{polyregion}.\cr
 #' If the \code{intrfr} function is provided (which is assumed to be exact), an
@@ -55,10 +58,9 @@
 #'
 #' Meyer, S. and Held, L. (2014).
 #' Power-law models for infectious disease spread.
-#' \emph{Annals of Applied Statistics}. In press, available as
-#' \href{http://arxiv.org/abs/1308.5115}{arXiv:1308.5115}.
-#' Supplements are available from
-#' \url{http://www.biostat.uzh.ch/research/manuscripts/powerlaw.html}.
+#' \emph{The Annals of Applied Statistics}, \bold{8} (3), 1612-1639.\cr
+#' DOI-Link: \url{http://dx.doi.org/10.1214/14-AOAS743},
+#' \href{http://arxiv.org/abs/1308.5115}{arXiv:1308.5115}
 #' @keywords math spatial
 #' @family polyCub-methods
 #' @example inst/examples/polyCub.iso.R
@@ -78,7 +80,9 @@ polyCub.iso <- function (polyregion, f, intrfr, ..., center,
         seq(1, max(abs(unlist(lapply(polys, "[", c("x","y"))))), length.out=20L)
     } else if (identical(check.intrfr, FALSE)) {
         numeric(0L)
-    } else check.intrfr
+    } else {
+        check.intrfr
+    }
     intrfr <- checkintrfr(intrfr, f, ..., center=center, control=control, rs=rs)
 
     ## plot polygon and function image
@@ -135,8 +139,9 @@ checkintrfr <- function (intrfr, f, ..., center, control = list(),
                 warning("'intrfr' might be incorrect: ", comp)
             } else cat("OK\n")
         }
-    } else if (doCheck)
+    } else if (doCheck) {
         stop("numerical verification of 'intrfr' requires 'f'")
+    }
     
     match.fun(intrfr)
 }
@@ -158,7 +163,9 @@ checkintrfr <- function (intrfr, f, ..., center, control = list(),
         structure(sum(sapply(ints, "[", 1, simplify=TRUE, USE.NAMES=FALSE)),
                   abs.error=sum(sapply(ints, "[", 2,
                   simplify=TRUE, USE.NAMES=FALSE)))
-    } else sum(unlist(ints, recursive=FALSE, use.names=FALSE))
+    } else {
+        sum(unlist(ints, recursive=FALSE, use.names=FALSE))
+    }
 }
 
 ## cubature method for a single polygon
@@ -169,8 +176,8 @@ polyCub1.iso <- function (poly, intrfr, ..., center,
     nedges <- nrow(xy)
     intedges <- erredges <- numeric(nedges)
     for (i in seq_len(nedges)) {
-        v0 <- xy[i,] - center
-        v1 <- xy[if (i==nedges) 1L else i+1L,] - center
+        v0 <- xy[i, ] - center
+        v1 <- xy[if (i==nedges) 1L else i+1L, ] - center
         int <- lineInt(v0, v1, intrfr, ..., control=control)
         intedges[i] <- int$value
         erredges[i] <- int$abs.error
@@ -200,7 +207,9 @@ lineInt <- function (v0, v1, intrfr, ..., control = list())
     }
     if (length(control)) {              # use slower do.call()-construct
         do.call("integrate", c(list(integrand, 0, 1), control))
-    } else integrate(integrand, 0, 1)
+    } else {
+        integrate(integrand, 0, 1)
+    }
 }
 
 ## equally fast method _only_ for convex polygonal domains including the origin
