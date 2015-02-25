@@ -3,8 +3,8 @@
 ### Free software under the terms of the GNU General Public License, version 2,
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
-### Copyright (C) 2009-2014 Sebastian Meyer
-### Time-stamp: <[polyCub.midpoint.R] 2014-09-27 13:48 (CEST) by SM>
+### Copyright (C) 2009-2015 Sebastian Meyer
+### Time-stamp: <[polyCub.midpoint.R] 2015-02-25 20:53 (CET) by SM>
 ################################################################################
 
 
@@ -19,7 +19,12 @@
 #' @inheritParams plotpolyf
 #' @param polyregion a polygonal integration domain.
 #' It can be any object coercible to the \pkg{spatstat} class
-#' \code{"\link[spatstat]{owin}"} (via \code{\link[spatstat]{as.owin}}).
+#' \code{"\link[spatstat]{owin}"} via a corresponding
+#' \code{\link[spatstat]{as.owin}}-method.
+#' Note that this includes polygons of the classes \code{"gpc.poly"} and
+#' \code{"\linkS4class{SpatialPolygons}"}, because \pkg{polyCub} defines
+#' methods \code{\link{as.owin.gpc.poly}} and
+#' \code{\link{as.owin.SpatialPolygons}}, respectively.
 #' @param eps width and height of the pixels (squares),
 #' see \code{\link[spatstat]{as.mask}}.
 #' @param dimyx number of subdivisions in each dimension,
@@ -35,7 +40,7 @@
 #' @keywords math spatial
 #' @family polyCub-methods
 #' @import sp
-#' @importFrom spatstat as.im.function plot.im
+#' @importFrom spatstat as.im.function plot.im integral.im
 #' @importFrom grDevices gray
 #' @examples # see example(polyCub)
 #' @export
@@ -63,17 +68,13 @@ polyCub.midpoint <- function (polyregion, f, ...,
 ### ILLUSTRATION ###
     if (plot) {
         plot.im(IM, axes=TRUE, col=gray(31:4/35), main="")
-        ## add evaluation points (unsure about spatstat implementation of class "im")
-        ## both of the following commands worked with different versions of spatstat
+        ## add evaluation points
         #with(IM, points(expand.grid(xcol, yrow), col=!is.na(v), cex=0.5))
-        #with(IM, points(expand.grid(y=yrow, x=xcol)[2:1], col=!is.na(v), cex=0.5))
         plot(polyregion, add=TRUE, poly.args=list(lwd=2), lwd=2)
         ##<- two 'lwd'-specifications such that it works with owin and gpc.poly
     }
 ####################
     
     ## return the approximated integral
-    pixelarea <- IM$xstep * IM$ystep
-    int <- pixelarea * sum(IM$v, na.rm = TRUE)
-    int
+    integral.im(IM)
 }

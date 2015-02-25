@@ -3,15 +3,15 @@
 ### Free software under the terms of the GNU General Public License, version 2,
 ### a copy of which is available at http://www.r-project.org/Licenses/.
 ###
-### Copyright (C) 2009-2014 Sebastian Meyer
-### Time-stamp: <[polyCub.exact.Gauss.R] by SM Die 06/05/2014 10:13 (CEST)>
+### Copyright (C) 2009-2015 Sebastian Meyer
+### Time-stamp: <[polyCub.exact.Gauss.R] 2015-02-15 17:27 (CET) by SM>
 ################################################################################
 
 
 #' Quasi-Exact Cubature of the Bivariate Normal Density
 #'
-#' Integration is based on triangulation of the polygonal domain and formulae
-#' from the 
+#' Integration is based on triangulation of the (transformed) polygonal domain
+#' and formulae from the 
 #' Abramowitz and Stegun (1972) handbook (Section 26.9, Example 9, pp. 956f.).
 #' This method is quite cumbersome because the A&S formula is only for triangles
 #' where one vertex is the origin (0,0). For each triangle of the
@@ -35,7 +35,7 @@
 #' to be integrated.
 #' @param plot logical indicating if an illustrative plot of the numerical
 #' integration should be produced. Note that the \code{polyregion} will be
-#' shifted and scaled.
+#' transformed (shifted and scaled).
 #' @return The integral of the bivariate normal density over \code{polyregion}.
 #' Two attributes are appended to the integral value:
 #' \item{nEval}{
@@ -73,20 +73,17 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
     if (is.polygonal(polyregion)) {
         polyregion <- owin2gpc(polyregion)
     } else if (!inherits(polyregion, "gpc.poly")) {
-        loadNamespace("rgeos")
+        if (inherits(polyregion, "SpatialPolygons") &&
+            !requireNamespace("rgeos")) {
+            stop("package ", sQuote("rgeos"), " is required to handle ",
+                 "\"SpatialPolygons\" input")
+        }
         polyregion <- as(polyregion, "gpc.poly")
     }
     
     ## coordinate transformation so that the standard bivariat normal density
     ## can be used in integrations (cf. formula 26.3.22)
-    rho <- cov2cor(Sigma)[1,2]
-    sdx <- sqrt(Sigma[1,1])
-    sdy <- sqrt(Sigma[2,2])
-    polyregion@pts <- lapply(polyregion@pts, function (poly) {
-        list(x = ((poly$x-mean[1])/sdx + (poly$y-mean[2])/sdy) / sqrt(2+2*rho),
-             y = ((poly$y-mean[2])/sdy - (poly$x-mean[1])/sdx) / sqrt(2-2*rho),
-             hole = poly$hole)
-    })
+    polyregion@pts <- transform_pts(polyregion@pts, mean = mean, Sigma = Sigma)
     
     ## triangulation: tristrip() returns a list where each element is a
     ## coordinate matrix of vertices of triangles 
@@ -99,23 +96,20 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
     }
 ####################
 
-    integrals <- sapply(triangleSets, function (triangles) {
+    integrals <- vapply(X = triangleSets, FUN = function (triangles) {
         int <- 0
         error <- 0
-        nTriangles <- nrow(triangles) - 2
+        nTriangles <- nrow(triangles) - 2L
         for (i in seq_len(nTriangles)) {
             res <- .intTriangleAS(triangles[i+(0:2),])
-            err <- attr(res, "error")
             int <- int + res
-            if (length(err) == 1L) error <- error + err
-            ##<- sometimes err==numeric(0) (probably meaning err=0)
+            error <- error + attr(res, "error")
         }
         c(int, nTriangles, error)
-    })
+    }, FUN.VALUE = numeric(3L), USE.NAMES = FALSE)
     int <- sum(integrals[1,])
     
-    ## number of .V() evaluations
-    ## (if 'h' in .intTriangleAS0 was always different from 0)
+    ## number of .V() evaluations (if there were no degenerate triangles)
     attr(int, "nEval") <- 6 * sum(integrals[2,])
     ## approximate absolute integration error
     attr(int, "error") <- sum(integrals[3,])
@@ -128,9 +122,28 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
 ### Auxiliary Functions ###
 ###########################
 
+## transform coordinates according to Formula 26.3.22
+transform_pts <- function (pts, mean, Sigma)
+{
+    mx <- mean[1L]
+    my <- mean[2L]
+    rho <- cov2cor(Sigma)[1L,2L]
+    sdx <- sqrt(Sigma[1L,1L])
+    sdy <- sqrt(Sigma[2L,2L])
+    lapply(pts, function (poly) {
+        x0 <- (poly[["x"]] - mx) / sdx
+        y0 <- (poly[["y"]] - my) / sdy
+        list(x = (x0 + y0) / sqrt(2 + 2*rho),
+             y = (y0 - x0) / sqrt(2 - 2*rho),
+             hole = poly[["hole"]])
+    })
+}
+
 ## calculates the integral of the standard bivariat normal over a triangle ABC
 .intTriangleAS <- function (xy)
 {
+    if (anyDuplicated(xy)) # degenerate triangle
+        return(structure(0, error = 0))
     A <- xy[1,]
     B <- xy[2,]
     C <- xy[3,]
@@ -152,17 +165,22 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
 ## calculates the integral of the standard bivariat normal over a triangle A0B
 .intTriangleAS0 <- function (A, B)
 {
-    d <- sqrt(sum((B-A)^2))
-    h <- abs(B[2]*A[1] - A[2]*B[1]) / d
-    if (h == 0) return(0)
-    k1 <- abs(A[1]*(B[1]-A[1]) + A[2]*(B[2]-A[2])) / d
-    k2 <- abs(B[1]*(B[1]-A[1]) + B[2]*(B[2]-A[2])) / d
+    BmA <- B - A
+    d <- sqrt(sum(BmA^2))
+    h <- abs(B[2L]*A[1L] - A[2L]*B[1L]) / d   # distance of AB to the origin
+    if (d == 0 || h == 0) # degenerate triangle: A == B or 0, A, B on a line
+        return(structure(0, error = 0))
     
-    V2 <- .V(h, k2)
-    V1 <- .V(h, k1)
-    res <- if (isTRUE(all.equal(k1+k2, d))) V2 + V1
-        else if (isTRUE(all.equal(abs(k2-k1), d))) abs(V2 - V1)
-        else stop("something went wrong...")
+    k1 <- dotprod(A, BmA) / d
+    k2 <- dotprod(B, BmA) / d
+    V2 <- .V(h, abs(k2))
+    V1 <- .V(h, abs(k1))
+    res <- if (sign(k1) == sign(k2)) {
+        ## A and B are on the same side of the normal line through 0
+        abs(V2 - V1)
+    } else {
+        V2 + V1
+    }
     attr(res, "error") <- attr(V1, "error") + attr(V2, "error")
     return(res)
 }
@@ -180,6 +198,8 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
 ## over a triangle bounded by y=0, y=ax, x=h (cf. formula 26.3.23)
 ##' @importFrom stats pnorm
 .V <- function(h,k) {
+    if (k == 0) # degenerate triangle
+        return(structure(0, error = 0))
     a <- k/h
     rho <- -a/sqrt(1+a^2)
     # V = 0.25 + L(h,0,rho) - L(0,0,rho) - Q(h) / 2
@@ -187,7 +207,7 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
     # V = L(h,0,rho) - asin(rho)/(2*pi) - Q(h) / 2
     Lh0rho <- mvtnorm::pmvnorm(
         lower = c(h,0), upper = c(Inf,Inf),
-        mean = c(0,0), corr = matrix(c(1,rho,rho,1),2,2)
+        mean = c(0,0), corr = matrix(c(1,rho,rho,1), 2L, 2L)
     )
     Qh <- pnorm(h, mean = 0, sd = 1, lower.tail = FALSE)
     return(Lh0rho - asin(rho)/2/pi - Qh/2)

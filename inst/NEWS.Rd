@@ -1,8 +1,32 @@
 \newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 %% some pre-defined commands: \R, \code, \acronym, \url, \file, \pkg
+%% Since R 3.2.0, there are some additional system Rd macros available,
+%% e.g., \CRANpkg and \doi. See the definitions in the file
+%% file.path(R.home("share"), "Rd", "macros", "system.Rd")
 
 \name{NEWS}
 \title{News for Package 'polyCub'}
+
+
+\section{Changes in polyCub version 0.5-2 (2015-02-25)}{
+
+  \itemize{
+    \item \code{polyCub.midpoint()} works directly with input
+    polygons of classes \code{"gpc.poly"} and \code{"SpatialPolygons"},
+    since package \pkg{polyCub} now registers corresponding
+    \code{as.owin}-methods.
+    
+    \item \code{polyCub.exact.Gauss()} did not work if the
+    \code{tristrip} of the transformed input polygon contained
+    degenerate triangles (spotted by Ignacio Quintero).
+
+    \item Line integration in \code{polyCub.iso()} could break due to
+    division by zero if the \code{center} point was part of the polygon
+    boundary.
+  }
+  
+}
+
 
 
 \section{Changes in polyCub version 0.5-1 (2014-10-24)}{
