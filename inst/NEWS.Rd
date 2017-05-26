@@ -1,4 +1,4 @@
-\newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+\newcommand{\CRANpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 %% some pre-defined commands: \R, \code, \acronym, \url, \file, \pkg
 %% Since R 3.2.0, there are some additional system Rd macros available,
 %% e.g., \CRANpkg and \doi. See the definitions in the file
@@ -6,6 +6,23 @@
 
 \name{NEWS}
 \title{News for Package 'polyCub'}
+
+
+\section{Changes in polyCub version 0.6.0 (2017-05-24)}{
+
+  \itemize{
+    \item Added full C-implementation of \code{polyCub.iso()},
+    which is exposed as \code{"polyCub_iso"} for use by other
+    \R packages (notably future versions of \CRANpkg{surveillance})
+    via \samp{LinkingTo: polyCub} and \samp{#include <polyCubAPI.h>}.
+    
+    \item Accommodate CRAN checks:
+    add missing import from \pkg{graphics},
+    register native routines and disable symbol search
+  }
+
+}
+
 
 
 \section{Changes in polyCub version 0.5-2 (2015-02-25)}{
