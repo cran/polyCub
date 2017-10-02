@@ -5,7 +5,7 @@
  *
  * This file is part of the R package "polyCub",
  * free software under the terms of the GNU General Public License, version 2,
- * a copy of which is available at http://www.R-project.org/Licenses/.
+ * a copy of which is available at https://www.R-project.org/Licenses/.
  ******************************************************************************/
 
 /* The corresponding math is derived in Supplement B (Section 2.4) of
@@ -14,9 +14,10 @@
  * https://doi.org/10.1214/14-AOAS743SUPPB
  */
 
-#include <math.h>
-#include <R_ext/Print.h>   // Rprintf
+#include <R_ext/Arith.h>   // R_FINITE, otherwise math.h would suffice
+#include <R_ext/Error.h>   // error
 #include <R_ext/Memory.h>  // R_alloc
+#include <R_ext/Print.h>   // Rprintf
 #include <R_ext/Applic.h>  // Rdqags
 
 // header file defines the intrfr_fn type
@@ -35,6 +36,8 @@ static double lineIntegrand(
     double norm2 = px*px + py*py;
     // evaluate F(R) = int_0^R r*f(r) dr at R=||(px,py)||
     double inti = intrfr(sqrt(norm2), pars);
+    if (!R_FINITE(inti))
+        error("non-finite intrfr value at R=%f", sqrt(norm2));
     return num*inti/norm2;
 }
 
@@ -126,7 +129,7 @@ void polyiso(
                      *subdivisions, epsabs, epsrel,
                      &resulti, &abserri, &nevali, &ieri);
         if (ieri > 0) {
-            if (stop_on_error == 0) {
+            if (*stop_on_error == 0) {
                 Rprintf("abnormal termination of integration routine (%i)\n", ieri);
             } else {
                 error("abnormal termination of integration routine (%i)\n", ieri);

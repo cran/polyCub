@@ -7,7 +7,7 @@
 \description{
 The \R package \pkg{polyCub} provides methods for \strong{cubature}
 (numerical integration) \strong{over polygonal domains}.
-The function \code{\link{polyCub}()} is the main entry point of the package. 
+The function \code{\link{polyCub}()} is the main entry point of the package.
 It is a wrapper around the specific cubature methods listed below.
 }
 \details{
@@ -60,12 +60,12 @@ Available as \url{http://epub.ub.uni-muenchen.de/11703/}.
 Meyer, S. and Held, L. (2014).
 Power-law models for infectious disease spread.
 \emph{The Annals of Applied Statistics}, \bold{8} (3), 1612-1639.\cr
-DOI-Link: \url{http://dx.doi.org/10.1214/14-AOAS743},
-\href{http://arxiv.org/abs/1308.5115}{arXiv:1308.5115}
+DOI-Link: \url{https://doi.org/10.1214/14-AOAS743},
+\href{https://arxiv.org/abs/1308.5115}{arXiv:1308.5115}
 
 Sommariva, A. and Vianello, M. (2007).
 Product Gauss cubature over polygons based on Green's integration formula.
-\emph{Bit Numerical Mathematics}, \bold{47} (2), 441-453.
+\emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.
 }
 \seealso{
 The packages \pkg{cubature} and \pkg{R2Cuba}, which are more

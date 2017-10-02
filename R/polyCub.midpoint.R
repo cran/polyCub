@@ -1,10 +1,11 @@
 ################################################################################
-### Part of the R package "polyCub".
-### Free software under the terms of the GNU General Public License, version 2,
-### a copy of which is available at http://www.r-project.org/Licenses/.
+### polyCub.midpoint: Two-Dimensional Midpoint Rule
 ###
-### Copyright (C) 2009-2015 Sebastian Meyer
-### Time-stamp: <[polyCub.midpoint.R] 2015-02-25 20:53 (CET) by SM>
+### Copyright (C) 2009-2015,2017 Sebastian Meyer
+###
+### This file is part of the R package "polyCub",
+### free software under the terms of the GNU General Public License, version 2,
+### a copy of which is available at https://www.R-project.org/Licenses/.
 ################################################################################
 
 
@@ -15,7 +16,7 @@
 #' \pkg{spatstat} (Baddeley and Turner, 2005).
 #' The integral under the surface is then approximated as the
 #' sum over (pixel area * f(pixel midpoint)).
-#' 
+#'
 #' @inheritParams plotpolyf
 #' @param polyregion a polygonal integration domain.
 #' It can be any object coercible to the \pkg{spatstat} class
@@ -40,7 +41,6 @@
 #' @keywords math spatial
 #' @family polyCub-methods
 #' @import sp
-#' @importFrom spatstat as.im.function plot.im integral.im
 #' @importFrom grDevices gray
 #' @examples # see example(polyCub)
 #' @export
@@ -54,7 +54,7 @@ polyCub.midpoint <- function (polyregion, f, ...,
 
     ## calculate pixel values of fxy
     IM <- tryCatch(
-          as.im.function(X=fxy, W=polyregion, ..., eps=eps, dimyx=dimyx),
+          spatstat::as.im.function(X=fxy, W=polyregion, ..., eps=eps, dimyx=dimyx),
           error = function (e) {
               ## if eps was to small such that the dimensions of the image would
               ## be too big then the operation matrix(TRUE, nr, nc) throws an
@@ -64,17 +64,17 @@ polyCub.midpoint <- function (polyregion, f, ...,
               stop("inapplicable choice of bandwidth (eps=", format(eps),
                    ") in midpoint rule:\n", e)
           })
-    
+
 ### ILLUSTRATION ###
     if (plot) {
-        plot.im(IM, axes=TRUE, col=gray(31:4/35), main="")
+        spatstat::plot.im(IM, axes=TRUE, col=gray(31:4/35), main="")
         ## add evaluation points
         #with(IM, points(expand.grid(xcol, yrow), col=!is.na(v), cex=0.5))
         plot(polyregion, add=TRUE, poly.args=list(lwd=2), lwd=2)
         ##<- two 'lwd'-specifications such that it works with owin and gpc.poly
     }
 ####################
-    
+
     ## return the approximated integral
-    integral.im(IM)
+    spatstat::integral.im(IM)
 }

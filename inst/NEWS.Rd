@@ -8,6 +8,26 @@
 \title{News for Package 'polyCub'}
 
 
+\section{Changes in polyCub version 0.6.1 (2017-10-02)}{
+
+  \itemize{
+    \item The exported C-function \code{polyCub_iso()} \dots
+    \itemize{
+      \item did not handle its \code{stop_on_error} argument correctly
+      (it would always stop on error).
+      \item now detects non-finite \code{intrfr} function values
+      and gives an informative error message (rather than just reporting
+      \dQuote{abnormal termination of integration routine}).
+    }
+
+    \item Package \pkg{polyCub} no longer strictly depends on package
+    \CRANpkg{spatstat}, which is only required for \code{polyCub.midpoint()}.
+  }
+
+}
+
+
+
 \section{Changes in polyCub version 0.6.0 (2017-05-24)}{
 
   \itemize{
