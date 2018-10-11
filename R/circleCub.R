@@ -12,10 +12,9 @@
 ##' Integration of the Isotropic Gaussian Density over Circular Domains
 ##'
 ##' This function calculates the integral of the bivariate, isotropic Gaussian
-##' density (i.e. \eqn{\Sigma} = \code{sd^2*diag(2)}) over circular domains via
-##' the cumulative distribution function of the (non-central) Chi-Squared
-##' distribution (\code{pchisq}), cp. Formula 26.3.24 in Abramowitz and Stegun
-##' (1972).
+##' density (i.e., \eqn{\Sigma} = \code{sd^2*diag(2)}) over a circular domain
+##' via the cumulative distribution function \code{pchisq} of the (non-central)
+##' Chi-Squared distribution (Abramowitz and Stegun, 1972, Formula 26.3.24).
 ##'
 ##' @references
 ##' Abramowitz, M. and Stegun, I. A. (1972).
@@ -38,7 +37,7 @@
 ##' @examples
 ##' circleCub.Gauss(center=c(1,2), r=3, mean=c(4,5), sd=6)
 ##'
-##' if (requireNamespace("mvtnorm") && gpclibPermit()) {
+##' if (requireNamespace("mvtnorm") && gpclibPermit() && requireNamespace("spatstat")) {
 ##'   ## compare with cubature over a polygonal approximation of a circle
 ##'   disc.poly <- spatstat::disc(radius=3, centre=c(1,2), npoly=32)
 ##'   polyCub.exact.Gauss(disc.poly, mean=c(4,5), Sigma=6^2*diag(2))

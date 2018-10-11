@@ -1,7 +1,7 @@
 ################################################################################
 ### polyCub.SV: Product Gauss Cubature over Polygonal Domains
 ###
-### Copyright (C) 2009-2014,2017 Sebastian Meyer
+### Copyright (C) 2009-2014,2017-2018 Sebastian Meyer
 ###
 ### This file is part of the R package "polyCub",
 ### free software under the terms of the GNU General Public License, version 2,
@@ -15,8 +15,8 @@
 ##' Sommariva and Vianello (2007).
 ##'
 ##' @inheritParams plotpolyf
-##' @param f a two-dimensional real function (or \code{NULL} to only compute
-##' nodes and weights).
+##' @param f a two-dimensional real-valued function to be integrated over
+##' \code{polyregion} (or \code{NULL} to only compute nodes and weights).
 ##' As its first argument it must take a coordinate matrix, i.e., a
 ##' numeric matrix with two columns, and it must return a numeric vector of
 ##' length the number of coordinates.
@@ -60,14 +60,15 @@
 ##' two columns), \code{weights} (a numeric vector of length
 ##' \code{nrow(nodes)}), the rotation \code{angle}, and \code{alpha}.
 ##' @author Sebastian Meyer\cr
-##' The product Gauss cubature is based on the
+##' These R and C implementations of product Gauss cubature are based on the
 ##' original \acronym{MATLAB} implementation \code{polygauss} by Sommariva and
 ##' Vianello (2007), which is available under the GNU GPL (>=2) license from
 ##' \url{http://www.math.unipd.it/~alvise/software.html}.
 ##' @references
-##' Sommariva, A. and Vianello, M. (2007).
+##' Sommariva, A. and Vianello, M. (2007):
 ##' Product Gauss cubature over polygons based on Green's integration formula.
-##' \emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.
+##' \emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.\cr
+##' DOI-Link: \url{https://doi.org/10.1007/s10543-007-0131-2}
 ##' @keywords math spatial
 ##' @family polyCub-methods
 ##' @importFrom graphics points
@@ -147,11 +148,7 @@ gauss.quad <- function (n)
 ##' @param nw_MN unnamed list of nodes and weights of one-dimensional Gauss
 ##' quadrature rules of degrees \eqn{N} and \eqn{M=N+1} (as returned by
 ##' \code{\link[statmod]{gauss.quad}}): \code{list(s_M, w_M, s_N, w_N)}.
-##' @inheritParams polyCub.SV
-##' @references
-##' Sommariva, A. and Vianello, M. (2007):
-##' Product Gauss cubature over polygons based on Green's integration formula.
-##' \emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.
+##' @inherit polyCub.SV params references
 ##' @keywords internal
 ##' @useDynLib polyCub, .registration = TRUE
 
@@ -183,7 +180,8 @@ polygauss <- function (xy, nw_MN, alpha = NULL, rotation = FALSE, engine = "C")
             stopifnot(any(P != Q))
             rotation <- TRUE
         } else {
-            stop("'rotation' must be logical or a list of points \"P\" and \"Q\"")
+            stop("'rotation' must be logical or a list of points ",
+                 "\"P\" and \"Q\"")
         }
         rotmat <- rotmatPQ(P,Q)
         angle <- attr(rotmat, "angle")
@@ -283,9 +281,11 @@ polygauss <- function (xy, nw_MN, alpha = NULL, rotation = FALSE, engine = "C")
     ## A COUPLE WITH THE SAME INDEX IS A POINT, i.e. P_i=(x(k),y(k)).
     ## Return in an unnamed list of nodes_x, nodes_y, weights
     ## (there is no need for c(nodes_x) and c(weights))
-    list(alpha + tcrossprod(scaling_fact_minus, s_N + 1), # degree_loc x N
-         rep.int(y_gauss_side, length(s_N)),              # length: degree_loc*N
-         tcrossprod(half_length_y*scaling_fact_minus*w_loc, w_N)) # degree_loc x N
+    list(
+        alpha + tcrossprod(scaling_fact_minus, s_N + 1), # degree_loc x N
+        rep.int(y_gauss_side, length(s_N)),              # length: degree_loc*N
+        tcrossprod(half_length_y*scaling_fact_minus*w_loc, w_N) # degree_loc x N
+    )
 }
 
 ## NOTE: The above .polygauss.side() function is already efficient R code.
@@ -332,18 +332,16 @@ vertexpairmaxdist <- function (xy)
 
 rotmatPQ <- function (P, Q)
 {
-    direction_axis <- (Q-P) / sqrt(sum((Q-P)^2))
+    direction_axis <- (Q-P) / vecnorm(Q-P)
 
-    ## determine rotation angle
+    ## determine rotation angle [radian]
     rot_angle_x <- acos(direction_axis[1L])
     rot_angle_y <- acos(direction_axis[2L])
-
     rot_angle <- if (rot_angle_y <= pi/2) {
         if (rot_angle_x <= pi/2) -rot_angle_y else rot_angle_y
     } else {
         if (rot_angle_x <= pi/2) pi-rot_angle_y else rot_angle_y
     }
-    ## cat(sprintf(' [ANGLE CLOCKWISE (IN DEGREES)]: %5.5f\n', rot_angle*180/pi))
 
     ## rotation matrix
     rot_matrix <- diag(cos(rot_angle), nrow=2L)

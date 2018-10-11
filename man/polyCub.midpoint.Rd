@@ -17,7 +17,7 @@ Note that this includes polygons of the classes \code{"gpc.poly"} and
 methods \code{\link{as.owin.gpc.poly}} and
 \code{\link{as.owin.SpatialPolygons}}, respectively.}
 
-\item{f}{a two-dimensional real function.
+\item{f}{a two-dimensional real-valued function.
 As its first argument it must take a coordinate matrix, i.e., a
 numeric matrix with two columns, and it must return a numeric vector of
 length the number of coordinates.}
@@ -57,5 +57,6 @@ Other polyCub-methods: \code{\link{polyCub.SV}},
   \code{\link{polyCub.exact.Gauss}},
   \code{\link{polyCub.iso}}, \code{\link{polyCub}}
 }
+\concept{polyCub-methods}
 \keyword{math}
 \keyword{spatial}

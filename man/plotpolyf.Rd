@@ -5,8 +5,8 @@
 \title{Plot Polygonal Domain on Image of Bivariate Function}
 \usage{
 plotpolyf(polyregion, f, ..., npixel = 100, cuts = 15,
-  col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL, ylim = NULL,
-  use.lattice = TRUE, print.args = list())
+  col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL,
+  ylim = NULL, use.lattice = TRUE, print.args = list())
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
@@ -16,7 +16,7 @@ The following classes are supported: \code{"\link[spatstat]{owin}"},
 and \code{"\linkS4class{Polygon}"}
 (for these we have an internal \code{\link{xylist}} method).}
 
-\item{f}{a two-dimensional real function.
+\item{f}{a two-dimensional real-valued function.
 As its first argument it must take a coordinate matrix, i.e., a
 numeric matrix with two columns, and it must return a numeric vector of
 length the number of coordinates.}
@@ -29,7 +29,7 @@ in each dimension.}
 \item{cuts}{number of cut points in the \eqn{z} dimension.
 The range of function values will be divided into \code{cuts+1} levels.}
 
-\item{col}{colour vector used for the function levels.}
+\item{col}{color vector used for the function levels.}
 
 \item{lwd}{line width of the polygon edges.}
 

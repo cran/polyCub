@@ -40,11 +40,10 @@
 #' \emph{Journal of Statistical Software}, \bold{12} (6), 1-42.
 #' @keywords math spatial
 #' @family polyCub-methods
-#' @import sp
+#' @importFrom sp plot
 #' @importFrom grDevices gray
 #' @examples # see example(polyCub)
 #' @export
-## NOTE: we don't import graphics::plot since it is already imported via sp
 
 polyCub.midpoint <- function (polyregion, f, ...,
                               eps = NULL, dimyx = NULL, plot = FALSE)
@@ -54,16 +53,16 @@ polyCub.midpoint <- function (polyregion, f, ...,
 
     ## calculate pixel values of fxy
     IM <- tryCatch(
-          spatstat::as.im.function(X=fxy, W=polyregion, ..., eps=eps, dimyx=dimyx),
-          error = function (e) {
-              ## if eps was to small such that the dimensions of the image would
-              ## be too big then the operation matrix(TRUE, nr, nc) throws an
-              ## error. (try e.g. devnull <- matrix(TRUE, 1e6,1e6))
-              ## unfortunately, it is not clear what we should do in this
-              ## case... => stop
-              stop("inapplicable choice of bandwidth (eps=", format(eps),
-                   ") in midpoint rule:\n", e)
-          })
+        spatstat::as.im.function(X = fxy, W = polyregion, ...,
+                                 eps = eps, dimyx = dimyx),
+        error = function (e) {
+        ## if eps was to small such that the dimensions of the image would
+        ## be too big then the operation matrix(TRUE, nr, nc) throws an
+        ## error. (try e.g. devnull <- matrix(TRUE, 1e6,1e6))
+        ## unfortunately, it is not clear what we should do in this case ...
+        stop("inapplicable choice of bandwidth (eps=", format(eps),
+             ") in midpoint rule:\n", e)
+    })
 
 ### ILLUSTRATION ###
     if (plot) {

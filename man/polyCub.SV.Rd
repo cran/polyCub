@@ -4,8 +4,8 @@
 \alias{polyCub.SV}
 \title{Product Gauss Cubature over Polygonal Domains}
 \usage{
-polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
-  engine = "C", plot = FALSE)
+polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL,
+  rotation = FALSE, engine = "C", plot = FALSE)
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
@@ -15,8 +15,8 @@ The following classes are supported: \code{"\link[spatstat]{owin}"},
 and \code{"\linkS4class{Polygon}"}
 (for these we have an internal \code{\link{xylist}} method).}
 
-\item{f}{a two-dimensional real function (or \code{NULL} to only compute
-nodes and weights).
+\item{f}{a two-dimensional real-valued function to be integrated over
+\code{polyregion} (or \code{NULL} to only compute nodes and weights).
 As its first argument it must take a coordinate matrix, i.e., a
 numeric matrix with two columns, and it must return a numeric vector of
 length the number of coordinates.}
@@ -77,9 +77,10 @@ Sommariva and Vianello (2007).
 # see example(polyCub)
 }
 \references{
-Sommariva, A. and Vianello, M. (2007).
+Sommariva, A. and Vianello, M. (2007):
 Product Gauss cubature over polygons based on Green's integration formula.
-\emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.
+\emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.\cr
+DOI-Link: \url{https://doi.org/10.1007/s10543-007-0131-2}
 }
 \seealso{
 Other polyCub-methods: \code{\link{polyCub.exact.Gauss}},
@@ -88,10 +89,11 @@ Other polyCub-methods: \code{\link{polyCub.exact.Gauss}},
 }
 \author{
 Sebastian Meyer\cr
-The product Gauss cubature is based on the
+These R and C implementations of product Gauss cubature are based on the
 original \acronym{MATLAB} implementation \code{polygauss} by Sommariva and
 Vianello (2007), which is available under the GNU GPL (>=2) license from
 \url{http://www.math.unipd.it/~alvise/software.html}.
 }
+\concept{polyCub-methods}
 \keyword{math}
 \keyword{spatial}

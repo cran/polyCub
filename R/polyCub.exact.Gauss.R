@@ -1,7 +1,7 @@
 ################################################################################
 ### polyCub.exact.Gauss: Quasi-Exact Cubature of the Bivariate Normal Density
 ###
-### Copyright (C) 2009-2017 Sebastian Meyer
+### Copyright (C) 2009-2018 Sebastian Meyer
 ###
 ### This file is part of the R package "polyCub",
 ### free software under the terms of the GNU General Public License, version 2,
@@ -11,8 +11,8 @@
 
 #' Quasi-Exact Cubature of the Bivariate Normal Density
 #'
-#' Integration is based on triangulation of the (transformed) polygonal domain
-#' and formulae from the
+#' The bivariate Gaussian density can be integrated based on a triangulation of
+#' the (transformed) polygonal domain, using formulae from the
 #' Abramowitz and Stegun (1972) handbook (Section 26.9, Example 9, pp. 956f.).
 #' This method is quite cumbersome because the A&S formula is only for triangles
 #' where one vertex is the origin (0,0). For each triangle of the
@@ -63,11 +63,10 @@
 #' @family polyCub-methods
 #' @examples # see example(polyCub)
 #' @import methods
-#' @import sp
+#' @importFrom sp plot
 #' @importFrom stats cov2cor
 #' @importFrom graphics lines
 #' @export
-## NOTE: we don't import graphics::plot since it is already imported via sp
 
 polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
                                  plot = FALSE)
@@ -169,7 +168,7 @@ transform_pts <- function (pts, mean, Sigma)
 .intTriangleAS0 <- function (A, B)
 {
     BmA <- B - A
-    d <- sqrt(sum(BmA^2))
+    d <- vecnorm(BmA)
     h <- abs(B[2L]*A[1L] - A[2L]*B[1L]) / d   # distance of AB to the origin
     if (d == 0 || h == 0) # degenerate triangle: A == B or 0, A, B on a line
         return(structure(0, error = 0))

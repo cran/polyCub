@@ -1,7 +1,7 @@
 ################################################################################
 ### as.owin.SpatialPolygons: Coerce "SpatialPolygons" to "owin"
 ###
-### Copyright (C) 2012-2013,2015,2017 Sebastian Meyer
+### Copyright (C) 2012-2013,2015,2017-2018 Sebastian Meyer
 ###
 ### This file is part of the R package "polyCub",
 ### free software under the terms of the GNU General Public License, version 2,
@@ -28,7 +28,23 @@
 ##' @keywords spatial methods
 ##' @name coerce-sp-methods
 ##' @rdname coerce-sp-methods
+##' @import methods
+##' @importClassesFrom sp Polygon Polygons SpatialPolygons owin
 ##' @exportMethod coerce
+##' @examples
+##' if (require("spatstat") && require("sp")) {
+##'     diamond <- list(x = c(1,2,1,0), y = c(1,2,3,2))  # anti-clockwise
+##'     diamond.owin <- owin(poly = diamond)
+##'     diamond.sp <- Polygon(lapply(diamond, rev))      # clockwise
+##'     diamond.owin_from_sp <- as(diamond.sp, "owin")
+##'     stopifnot(all.equal(diamond.owin, diamond.owin_from_sp))
+##'
+##'     ## similarly works for Polygons and SpatialPolygons
+##'     diamond.Ps <- as(diamond.sp, "Polygons")
+##'     stopifnot(identical(diamond.owin, as.owin(diamond.Ps)))
+##'     diamond.SpPs <- SpatialPolygons(list(diamond.Ps))
+##'     stopifnot(identical(diamond.owin, as.owin(diamond.SpPs)))
+##' }
 NULL
 
 ##' @param W an object of class \code{"SpatialPolygons"},
@@ -36,6 +52,11 @@ NULL
 ##' @param ... further arguments passed to \code{\link[spatstat]{owin}}.
 ##' @rdname coerce-sp-methods
 ##' @export
+##' @rawNamespace if(getRversion() >= "3.6.0") {  # delayed registration
+##'     S3method(spatstat::as.owin, SpatialPolygons)
+##'     S3method(spatstat::as.owin, Polygons)
+##'     S3method(spatstat::as.owin, Polygon)
+##' }
 as.owin.SpatialPolygons <- function (W, ...)
     spatstat::owin(poly = xylist.SpatialPolygons(W), ...)
 
@@ -50,25 +71,6 @@ as.owin.Polygon <- function (W, ...)
     spatstat::owin(poly = xylist.Polygon(W), ...)
 
 
-## Register "owin" as class in S4 so we can define methods for it
-##setClass("owin")
-## -> no need to register "owin", since we depend on sp which does it !
-## Otherwise we would get the following warning upon package installation:
-## Warning in .simpleDuplicateClass(def, prev) :
-##   the specification for class "owin" in package 'polyCub' seems
-##   equivalent to one from package 'sp' and is not turning on
-##   duplicate class definitions for this class
-## Using setOldClass("owin") is incompatible with package "maptools", which
-## does setClass("owin") _and_ exports this class! Specifically, loading
-## library("polyCub"); library("maptools"); library("gpclib")
-## in this order would not work (no idea why) throwing:
-## Error : package slot missing from signature for generic 'plot'
-## and classes gpc.poly, ANY
-## cannot use with duplicate class names (the package may need to be
-## re-installed)
-## Error: package/namespace load failed for 'gpclib'
-
-##' @importClassesFrom sp owin
 ##' @name coerce,SpatialPolygons,owin-method
 ##' @rdname coerce-sp-methods
 setAs(from = "SpatialPolygons", to = "owin",

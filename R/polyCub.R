@@ -20,9 +20,11 @@
 #' \code{"\link[spatstat]{owin}"} class from package \pkg{spatstat} works for
 #' all methods, as well should a \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"}
 #' polygon (but see the comments in \code{help("\link{coerce-methods}")}).
-#' @param f two-dimensional function to be integrated.
-#' As its first argument the function must take a coordinate matrix, i.e. a
-#' numeric matrix with two columns. For the \code{"exact.Gauss"} \code{method},
+#' @param f a two-dimensional real-valued function to be integrated over
+#' \code{polyregion}. As its first argument it must take a coordinate matrix,
+#' i.e., a numeric matrix with two columns, and it must return a numeric vector
+#' of length the number of coordinates.\cr
+#' For the \code{"exact.Gauss"} \code{method},
 #' \code{f} is ignored since it is specific to the bivariate normal density.
 #' @param method choose one of the implemented cubature methods (partial
 #' argument matching is applied), see \code{help("\link{polyCub-package}")}
@@ -32,7 +34,7 @@
 #' @param plot logical indicating if an illustrative plot of the numerical
 #' integration should be produced.
 #' @return The approximated integral of \code{f} over \code{polyregion}.
-#' @example inst/examples/polyCub.R
+#' @example examples/polyCub.R
 #' @keywords math spatial
 #' @family polyCub-methods
 #' @export
@@ -41,11 +43,11 @@ polyCub <- function (polyregion, f,
                      method = c("SV", "midpoint", "iso", "exact.Gauss"), ...,
                      plot = FALSE)
 {
-	method <- match.arg(method)
-	cl <- match.call()
-	cl$method <- NULL
-	cl[[1]] <- as.name(paste("polyCub", method, sep="."))
-	if (method == "exact.Gauss") cl$f <- NULL
-	int <- eval(cl, parent.frame())
-	int  #structure(int, method = method)
+    method <- match.arg(method)
+    cl <- match.call()
+    cl$method <- NULL
+    cl[[1]] <- as.name(paste("polyCub", method, sep="."))
+    if (method == "exact.Gauss") cl$f <- NULL
+    int <- eval(cl, parent.frame())
+    int  #structure(int, method = method)
 }
