@@ -9,11 +9,13 @@ polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL,
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
-The following classes are supported: \code{"\link[spatstat]{owin}"},
-\code{"\link[rgeos:gpc.poly-class]{gpc.poly}"},
+The following classes are supported:
+\code{"\link[spatstat]{owin}"} from package \pkg{spatstat},
+\code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
+\pkg{gpclib}), as well as
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
-and \code{"\linkS4class{Polygon}"}
-(for these we have an internal \code{\link{xylist}} method).}
+and \code{"\linkS4class{Polygon}"} from package \pkg{sp}.
+(For these classes, \pkg{polyCub} knows how to get an \code{\link{xylist}}.)}
 
 \item{f}{a two-dimensional real-valued function to be integrated over
 \code{polyregion} (or \code{NULL} to only compute nodes and weights).
@@ -74,7 +76,59 @@ Product Gauss cubature over polygons as proposed by
 Sommariva and Vianello (2007).
 }
 \examples{
-# see example(polyCub)
+## a function to integrate (here: isotropic zero-mean Gaussian density)
+f <- function (s, sigma = 5)
+    exp(-rowSums(s^2)/2/sigma^2) / (2*pi*sigma^2)
+
+## a simple polygon as integration domain
+hexagon <- list(
+    list(x = c(7.33, 7.33, 3, -1.33, -1.33, 3),
+         y = c(-0.5, 4.5, 7, 4.5, -0.5, -3))
+)
+
+## image of the function and integration domain
+plotpolyf(hexagon, f, xlim = c(-8,8), ylim = c(-8,8))
+
+## use a degree of nGQ = 3 and show the corresponding nodes
+polyCub.SV(hexagon, f, nGQ = 3, plot = TRUE)
+
+## extract nodes and weights
+nw <- polyCub.SV(hexagon, f = NULL, nGQ = 3)[[1]]
+nrow(nw$nodes)
+
+## manually apply the cubature rule
+sum(nw$weights * f(nw$nodes))
+
+## use an increasing number of nodes
+for (nGQ in c(1:5, 10, 20, 60))
+    cat(sprintf("nGQ = \%2i: \%.16f\\n", nGQ,
+                polyCub.SV(hexagon, f, nGQ = nGQ)))
+
+## polyCub.SV() is the default method used by the polyCub() wrapper
+polyCub(hexagon, f, nGQ = 3)  # calls polyCub.SV()
+
+
+### now using a simple *rectangular* integration domain
+
+rectangle <- list(list(x = c(-1, 7, 7, -1), y = c(-3, -3, 7, 7)))
+
+## try rotation (may improve accuracy)
+opar <- par(mfrow = c(1,3))
+polyCub.SV(rectangle, f, nGQ = 4, rotation = FALSE, plot = TRUE)
+           title(main = "without rotation")
+polyCub.SV(rectangle, f, nGQ = 4, rotation = TRUE,  plot = TRUE)
+           title(main = "default rotation")
+polyCub.SV(rectangle, f, nGQ = 4,
+           rotation = list(P = c(0,0), Q = c(2,-3)), plot = TRUE)
+           title(main = "custom rotation")
+par(opar)
+
+## comparison with cubature::adaptIntegrate()
+if (require("cubature")) {
+    fc <- function (s, sigma = 5)
+        exp(-sum(s^2)/2/sigma^2) / (2*pi*sigma^2)
+    adaptIntegrate(f = fc, lowerLimit = c(-1, -3), upperLimit = c(7, 7))
+}
 }
 \references{
 Sommariva, A. and Vianello, M. (2007):

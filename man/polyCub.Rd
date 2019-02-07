@@ -8,11 +8,14 @@ polyCub(polyregion, f, method = c("SV", "midpoint", "iso",
   "exact.Gauss"), ..., plot = FALSE)
 }
 \arguments{
-\item{polyregion}{a polygonal integration domain.
-The supported classes depend on the specific method, however, the
-\code{"\link[spatstat]{owin}"} class from package \pkg{spatstat} works for
-all methods, as well should a \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"}
-polygon (but see the comments in \code{help("\link{coerce-methods}")}).}
+\item{polyregion}{a polygonal domain.
+The following classes are supported:
+\code{"\link[spatstat]{owin}"} from package \pkg{spatstat},
+\code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
+\pkg{gpclib}), as well as
+\code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
+and \code{"\linkS4class{Polygon}"} from package \pkg{sp}.
+(For these classes, \pkg{polyCub} knows how to get an \code{\link{xylist}}.)}
 
 \item{f}{a two-dimensional real-valued function to be integrated over
 \code{polyregion}. As its first argument it must take a coordinate matrix,
@@ -23,7 +26,7 @@ For the \code{"exact.Gauss"} \code{method},
 
 \item{method}{choose one of the implemented cubature methods (partial
 argument matching is applied), see \code{help("\link{polyCub-package}")}
-for an overview. Defaults to using the product Gauss cubature
+for an overview. Defaults to using product Gauss cubature
 implemented in \code{\link{polyCub.SV}}.}
 
 \item{...}{arguments of \code{f} or of the specific \code{method}.}
@@ -35,114 +38,14 @@ integration should be produced.}
 The approximated integral of \code{f} over \code{polyregion}.
 }
 \description{
-Instead of calling one of the specific cubature methods of this package, the
-wrapper function \code{polyCub} may be used together with the \code{method}
-argument.
-}
-\examples{
-## a function to integrate (here: isotropic zero-mean Gaussian density)
-f <- function (s, sigma = 5)
-    exp(-rowSums(s^2)/2/sigma^2) / (2*pi*sigma^2)
-
-## a simple polygon as integration domain
-hexagon <- list(
-    list(x = c(7.33, 7.33, 3, -1.33, -1.33, 3),
-         y = c(-0.5, 4.5, 7, 4.5, -0.5, -3))
-)
-
-## image of the function and integration domain
-plotpolyf(hexagon, f, xlim = c(-8,8), ylim = c(-8,8))
-
-
-### 1. Product Gauss cubature
-
-## use a degree of nGQ = 3 and show the corresponding nodes
-polyCub.SV(hexagon, f, nGQ = 3, plot = TRUE)
-
-## extract nodes and weights
-nw <- polyCub.SV(hexagon, f = NULL, nGQ = 3)[[1]]
-nrow(nw$nodes)
-
-## manually apply the cubature rule
-sum(nw$weights * f(nw$nodes))
-
-## use an increasing number of nodes
-for (nGQ in c(1:5, 10, 20, 60))
-    cat(sprintf("nGQ = \%2i: \%.16f\\n", nGQ,
-                polyCub.SV(hexagon, f, nGQ = nGQ)))
-
-## polyCub.SV() is the default method used by the polyCub() wrapper
-polyCub(hexagon, f, nGQ = 3)  # calls polyCub.SV()
-
-
-### 2. Two-dimensional midpoint rule
-
-if (require("spatstat")) {
-    hexagon.owin <- owin(poly = hexagon)
-
-    show_midpoint <- function (eps)
-    {
-        plotpolyf(hexagon.owin, f, xlim = c(-8,8), ylim = c(-8,8),
-                  use.lattice = FALSE)
-        ## add evaluation points to plot
-        with(as.mask(hexagon.owin, eps = eps),
-             points(expand.grid(xcol, yrow), col = t(m), pch = 20))
-        title(main = paste("2D midpoint rule with eps =", eps))
-    }
-
-    ## show nodes (eps = 0.5)
-    show_midpoint(0.5)
-
-    ## show pixel image (eps = 0.5)
-    polyCub.midpoint(hexagon.owin, f, eps = 0.5, plot = TRUE)
-
-    ## use a decreasing pixel size (increasing number of nodes)
-    for (eps in c(5, 3, 1, 0.5, 0.3, 0.1))
-        cat(sprintf("eps = \%.1f: \%.7f\\n", eps,
-                    polyCub.midpoint(hexagon.owin, f, eps = eps)))
-}
-
-
-### 3. Adaptive cubature for *isotropic* functions
-
-polyCub.iso(hexagon, f, center = c(0,0))
-## see ?polyCub.iso and the examples therein
-
-
-### 4. Quasi-exact cubature of the bivariate Gaussian density
-###    based on gpclib::tristrip and mvtnorm::pmvnorm()
-
-if (requireNamespace("mvtnorm") && gpclibPermit()) {
-    hexagon.gpc <- new("gpc.poly", pts = lapply(hexagon, c, list(hole = FALSE)))
-    print(polyCub.exact.Gauss(hexagon.gpc, mean = c(0,0), Sigma = 5^2*diag(2),
-                              plot = TRUE), digits = 16)
-}
-
-
-
-### now using a simple *rectangular* integration domain
-
-rectangle <- list(list(x = c(-1, 7, 7, -1), y = c(-3, -3, 7, 7)))
-
-## polyCub.SV 'rotation' (may improve accuracy)
-opar <- par(mfrow = c(1,3))
-polyCub.SV(rectangle, f, nGQ = 4, rotation = FALSE, plot = TRUE)
-           title(main = "without rotation")
-polyCub.SV(rectangle, f, nGQ = 4, rotation = TRUE,  plot = TRUE)
-           title(main = "default rotation")
-polyCub.SV(rectangle, f, nGQ = 4,
-           rotation = list(P = c(0,0), Q = c(2,-3)), plot = TRUE)
-           title(main = "custom rotation")
-par(opar)
-
-## comparison with cubature::adaptIntegrate()
-if (require("cubature")) {
-    fc <- function (s, sigma = 5)
-        exp(-sum(s^2)/2/sigma^2) / (2*pi*sigma^2)
-    adaptIntegrate(f = fc, lowerLimit = c(-1, -3), upperLimit = c(7, 7))
-}
+The wrapper function \code{polyCub} can be used to call specific cubature
+methods via its \code{method} argument. It calls \code{\link{polyCub.SV}}
+by default, which implements general-purpose product Gauss cubature.
 }
 \seealso{
+Details and examples in the \code{vignette("polyCub")}
+and on the method-specific help pages.
+
 Other polyCub-methods: \code{\link{polyCub.SV}},
   \code{\link{polyCub.exact.Gauss}},
   \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
