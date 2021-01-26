@@ -5,17 +5,18 @@
 \title{Plot Polygonal Domain on Image of Bivariate Function}
 \usage{
 plotpolyf(polyregion, f, ..., npixel = 100, cuts = 15,
-  col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL,
-  ylim = NULL, use.lattice = TRUE, print.args = list())
+  col = rev(heat.colors(cuts + 1)), lwd = 3, xlim = NULL, ylim = NULL,
+  use.lattice = TRUE, print.args = list())
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
 The following classes are supported:
-\code{"\link[spatstat]{owin}"} from package \pkg{spatstat},
+\code{"\link[spatstat.geom]{owin}"} from package \pkg{spatstat.geom},
 \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
-\pkg{gpclib}), as well as
+\pkg{gpclib}),
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
-and \code{"\linkS4class{Polygon}"} from package \pkg{sp}.
+and \code{"\linkS4class{Polygon}"} from package \pkg{sp}, as well as
+\code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}.
 (For these classes, \pkg{polyCub} knows how to get an \code{\link{xylist}}.)}
 
 \item{f}{a two-dimensional real-valued function.
@@ -52,14 +53,12 @@ function, using either \code{\link[lattice:levelplot]{lattice::levelplot}}
 or \code{\link{image}}.
 }
 \examples{
-### a polygonal domain (a rounded version of spatstat.data::letterR$bdry)
+### a polygonal domain (a simplified version of spatstat.data::letterR$bdry)
 letterR <- list(
-    list(x = c(3.9, 3.8, 3.7, 3.5, 3.4, 3.5, 3.7, 3.8, 3.8, 3.7,
-               3.7, 3.5, 3.3, 2, 2, 2.7, 2.7, 2.9, 3, 3.3, 3.9),
-         y = c(0.7, 1.1, 1.3, 1.7, 1.8, 1.9, 2.1, 2.3, 2.5, 2.8, 3,
-               3.2, 3.3, 3.3, 0.7, 0.7, 1.7, 1.7, 1.5, 0.7, 0.6)),
-    list(x = c(2.6, 2.6, 3, 3.1, 3.2, 3.1, 3.1, 3),
-         y = c(2.2, 2.7, 2.7, 2.6, 2.5, 2.4, 2.3, 2.2))
+    list(x = c(2.7, 3, 3.3, 3.9, 3.7, 3.4, 3.8, 3.7, 3.4, 2, 2, 2.7),
+         y = c(1.7, 1.6, 0.7, 0.7, 1.3, 1.8, 2.2, 2.9, 3.3, 3.3, 0.7, 0.7)),
+    list(x = c(2.6, 2.6, 3, 3.2, 3),
+         y = c(2.2, 2.7, 2.7, 2.5, 2.2))
 )
 
 ### f: isotropic exponential decay

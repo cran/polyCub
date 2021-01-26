@@ -8,17 +8,17 @@
 polyCub.iso(polyregion, f, intrfr, ..., center, control = list(),
   check.intrfr = FALSE, plot = FALSE)
 
-.polyCub.iso(polys, intrfr, ..., center, control = list(),
-  .witherror = FALSE)
+.polyCub.iso(polys, intrfr, ..., center, control = list(), .witherror = FALSE)
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
 The following classes are supported:
-\code{"\link[spatstat]{owin}"} from package \pkg{spatstat},
+\code{"\link[spatstat.geom]{owin}"} from package \pkg{spatstat.geom},
 \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
-\pkg{gpclib}), as well as
+\pkg{gpclib}),
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
-and \code{"\linkS4class{Polygon}"} from package \pkg{sp}.
+and \code{"\linkS4class{Polygon}"} from package \pkg{sp}, as well as
+\code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}.
 (For these classes, \pkg{polyCub} knows how to get an \code{\link{xylist}}.)}
 
 \item{f}{a two-dimensional real-valued function.
@@ -109,7 +109,7 @@ stopifnot(all.equal(intISOana, intISOnum, check.attributes = FALSE))
 intrfr.const <- function (R) R^2/2
 (area.ISO <- polyCub.iso(letterR, intrfr = intrfr.const, center = c(0,0)))
 
-if (require("spatstat")) { # check against area.owin()
+if (require("spatstat.geom")) { # check against area.owin()
     stopifnot(all.equal(area.owin(owin(poly = letterR)),
                         area.ISO, check.attributes = FALSE))
 }
@@ -120,9 +120,8 @@ Space-Time Modeling and Inference (May 2013, Aalborg, Denmark).
 
 Meyer, S. and Held, L. (2014).
 Power-law models for infectious disease spread.
-\emph{The Annals of Applied Statistics}, \bold{8} (3), 1612-1639.\cr
-DOI-Link: \url{https://doi.org/10.1214/14-AOAS743},
-\href{https://arxiv.org/abs/1308.5115}{arXiv:1308.5115}
+\emph{The Annals of Applied Statistics}, \bold{8} (3), 1612-1639.
+\doi{10.1214/14-AOAS743}
 }
 \seealso{
 \code{system.file("include", "polyCubAPI.h", package = "polyCub")}
@@ -133,9 +132,11 @@ other \R packages, notably \pkg{surveillance}, via \samp{LinkingTo: polyCub}
 \file{/src} files). Note that the \code{intrfr} function must then also be
 supplied as a C-routine. An example can be found in the package tests.
 
-Other polyCub-methods: \code{\link{polyCub.SV}},
-  \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.midpoint}}, \code{\link{polyCub}}
+Other polyCub-methods: 
+\code{\link{polyCub.SV}()},
+\code{\link{polyCub.exact.Gauss}()},
+\code{\link{polyCub.midpoint}()},
+\code{\link{polyCub}()}
 }
 \author{
 Sebastian Meyer

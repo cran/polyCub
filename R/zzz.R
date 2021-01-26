@@ -1,7 +1,7 @@
 ################################################################################
 ### Package Setup
 ###
-### Copyright (C) 2009-2014,2018-2019 Sebastian Meyer
+### Copyright (C) 2009-2014,2018-2021 Sebastian Meyer
 ###
 ### This file is part of the R package "polyCub",
 ### free software under the terms of the GNU General Public License, version 2,
@@ -25,8 +25,8 @@
 #' }
 #' \item{\code{\link{polyCub.midpoint}}:}{
 #' Simple \emph{two-dimensional midpoint rule} based on
-#' \code{\link[spatstat]{as.im.function}} from \pkg{spatstat}
-#' (Baddeley and Turner, 2005)
+#' \code{\link[spatstat.geom]{as.im.function}} from \pkg{spatstat.geom}
+#' (Baddeley et al., 2015)
 #' }
 #' \item{\code{\link{polyCub.iso}}:}{
 #' Adaptive cubature for \emph{radially symmetric functions}
@@ -49,28 +49,27 @@
 #'
 #' @references
 #' Abramowitz, M. and Stegun, I. A. (1972).
-#' Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical
-#' Tables. New York: Dover Publications.
+#' \emph{Handbook of Mathematical Functions with Formulas, Graphs, and
+#' Mathematical Tables}. New York: Dover Publications.
 #'
-#' Baddeley, A. and Turner, R. (2005).
-#' \pkg{spatstat}: an \R package for analyzing spatial point patterns.
-#' \emph{Journal of Statistical Software}, \bold{12} (6), 1-42.
+#' Baddeley, A., Rubak, E. and Turner, R. (2015).
+#' \emph{Spatial Point Patterns: Methodology and Applications with R}.
+#' Chapman and Hall/CRC Press, London.
 #'
 #' Meyer, S. (2010).
-#' Spatio-Temporal Infectious Disease Epidemiology based on Point Processes.
-#' Master's Thesis, LMU Munich.
-#' Available as \url{http://epub.ub.uni-muenchen.de/11703/}.
+#' \emph{Spatio-Temporal Infectious Disease Epidemiology based on Point
+#' Processes}. Master's Thesis, LMU Munich.
+#' Available as \url{https://epub.ub.uni-muenchen.de/11703/}.
 #'
 #' Meyer, S. and Held, L. (2014).
 #' Power-law models for infectious disease spread.
-#' \emph{The Annals of Applied Statistics}, \bold{8} (3), 1612-1639.\cr
-#' DOI-Link: \url{https://doi.org/10.1214/14-AOAS743},
-#' \href{https://arxiv.org/abs/1308.5115}{arXiv:1308.5115}
+#' \emph{The Annals of Applied Statistics}, \bold{8} (3), 1612-1639.
+#' \doi{10.1214/14-AOAS743}
 #'
 #' Sommariva, A. and Vianello, M. (2007).
 #' Product Gauss cubature over polygons based on Green's integration formula.
-#' \emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.\cr
-#' DOI-Link: \url{https://doi.org/10.1007/s10543-007-0131-2}
+#' \emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.
+#' \doi{10.1007/s10543-007-0131-2}
 #' @docType package
 #' @name polyCub-package
 #' @seealso
@@ -91,27 +90,25 @@ NULL
 gpclibCheck <- function (fatal = TRUE)
 {
     gpclibOK <- .Options$gpclib
-    if (!gpclibOK && fatal) {
-        message("Note: The gpclib license is accepted by ",
-                sQuote("gpclibPermit()"), ".")
-        stop("acceptance of the gpclib license is required")
-    }
+    if (!gpclibOK && fatal)
+        stop("acceptance of the gpclib license is required; see ",
+             sQuote("help(gpclibPermit)"))
     gpclibOK
 }
 
-##' \pkg{gpclib} License Acceptance
-##'
-##' Similar to the handling in package \pkg{maptools}, these functions
-##' explicitly accept the restricted \pkg{gpclib} license (commercial use
-##' prohibited) and report its acceptance status, respectively.
-##' \pkg{gpclib} functionality is only required for
-##' \code{\link{polyCub.exact.Gauss}}.
-##' @export
+#' \pkg{gpclib} License Acceptance
+#'
+#' Similar to the handling in package \pkg{maptools}, these functions
+#' explicitly accept the restricted \pkg{gpclib} license (commercial use
+#' prohibited) and report its acceptance status, respectively.
+#' \pkg{gpclib} functionality is only required for
+#' \code{\link{polyCub.exact.Gauss}}.
+#' @export
 gpclibPermit <- function ()
 {
     if (requireNamespace("gpclib")) .Options$gpclib <- TRUE
     gpclibPermitStatus()
 }
-##' @rdname gpclibPermit
-##' @export
+#' @rdname gpclibPermit
+#' @export
 gpclibPermitStatus <- function () gpclibCheck(fatal=FALSE)

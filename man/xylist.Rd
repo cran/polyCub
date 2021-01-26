@@ -3,6 +3,7 @@
 \name{xylist}
 \alias{xylist}
 \alias{xylist.owin}
+\alias{xylist.sfg}
 \alias{xylist.gpc.poly}
 \alias{xylist.SpatialPolygons}
 \alias{xylist.Polygons}
@@ -13,6 +14,8 @@
 xylist(object, ...)
 
 \method{xylist}{owin}(object, ...)
+
+\method{xylist}{sfg}(object, ...)
 
 \method{xylist}{gpc.poly}(object, ...)
 
@@ -36,49 +39,55 @@ convention.}
 \value{
 Applying \code{xylist} to a polygon object, one gets a simple list,
 where each component (polygon) is a list of \code{"x"} and \code{"y"}
-coordinates. These represent vertex coordinates following \pkg{spatstat}'s
-\code{"owin"} convention (anticlockwise order without repeating any vertex).
-The opposite vertex order can be retained for the \pkg{sp}-classes
-by the non-default use with \code{reverse=FALSE}.
+coordinates. These represent vertex coordinates following \pkg{spatstat.geom}'s
+\code{"owin"} convention (anticlockwise order for exterior boundaries,
+without repeating any vertex).
 }
 \description{
 Different packages concerned with spatial data use different polygon
 specifications, which sometimes becomes very confusing (see Details below).
 To be compatible with the various polygon classes, package \pkg{polyCub}
-uses an S3 class \code{"xylist"}, which represents
-polygons by their core feature only, a list of lists of vertex coordinates
-(see the "Value" section below).
+uses an S3 class \code{"xylist"}, which represents a polygonal domain
+(of potentially multiple polygons) by its core feature only: a list of lists
+of vertex coordinates (see the "Value" section below).
 The generic function \code{xylist} can deal with the
 following polygon classes:
 \itemize{
-\item{\code{"\link[spatstat:owin.object]{owin}"} from package \pkg{spatstat}}
-\item{\code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from package
-\pkg{rgeos} (or \pkg{gpclib})}
-\item{\code{"\linkS4class{Polygons}"} from package \pkg{sp}
+\item \code{"\link[spatstat.geom:owin.object]{owin}"} from package \pkg{spatstat.geom}
+\item \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from package
+\pkg{rgeos} (or \pkg{gpclib})
+\item \code{"\linkS4class{Polygons}"} from package \pkg{sp}
 (as well as \code{"\linkS4class{Polygon}"} and
-\code{"\linkS4class{SpatialPolygons}"})}
+\code{"\linkS4class{SpatialPolygons}"})
+\item \code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}
 }
 The (somehow useless) default \code{xylist}-method
 does not perform any transformation but only ensures that the polygons are
 not closed (first vertex not repeated).
 }
 \details{
-Different packages concerned with spatial data use different polygon
-specifications with respect to:
+Polygon specifications differ with respect to:
 \itemize{
-\item{do we repeat the first vertex?}
-\item{which direction represents holes?}
+\item is the first vertex repeated?
+\item which ring direction represents holes?
 }
 Package overview:
 \describe{
+\item{\pkg{spatstat.geom}:}{\code{"owin"} does \emph{not repeat} the
+first vertex, and anticlockwise = normal boundary, clockwise = hole.
+This convention is also used for the return value of \code{xylist}.}
 \item{\pkg{sp}:}{\emph{Repeat} first vertex at the end (closed),
 anticlockwise = hole, clockwise = normal boundary}
-\item{\pkg{spatstat}:}{do \emph{not repeat} first vertex,
-anticlockwise = normal boundary, clockwise = hole. This convention is also
-used in \code{xylist}.}
-\item{\pkg{gpclib}:}{Unfortunately, there seems to be no convention
-for the specification of polygons of class \code{"gpc.poly"}.}
+\item{\pkg{sf}:}{\emph{Repeat} first vertex at the end (closed),
+clockwise = hole, anticlockwise = normal boundary;
+\emph{however}, \pkg{sf} does not check the ring direction by default, so
+it cannot be relied upon.}
+\item{\pkg{gpclib}:}{There seem to be no such conventions
+for polygons of class \code{"gpc.poly"}.}
 }
+Thus, for polygons from \pkg{sf} and \pkg{gpclib}, \code{xylist} needs
+to check the ring direction, which makes these two formats the least
+efficient for integration domains in \pkg{polyCub}.
 }
 \author{
 Sebastian Meyer

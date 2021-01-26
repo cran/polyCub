@@ -4,17 +4,18 @@
 \alias{polyCub}
 \title{Wrapper Function for the Various Cubature Methods}
 \usage{
-polyCub(polyregion, f, method = c("SV", "midpoint", "iso",
-  "exact.Gauss"), ..., plot = FALSE)
+polyCub(polyregion, f, method = c("SV", "midpoint", "iso", "exact.Gauss"),
+  ..., plot = FALSE)
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
 The following classes are supported:
-\code{"\link[spatstat]{owin}"} from package \pkg{spatstat},
+\code{"\link[spatstat.geom]{owin}"} from package \pkg{spatstat.geom},
 \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
-\pkg{gpclib}), as well as
+\pkg{gpclib}),
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
-and \code{"\linkS4class{Polygon}"} from package \pkg{sp}.
+and \code{"\linkS4class{Polygon}"} from package \pkg{sp}, as well as
+\code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}.
 (For these classes, \pkg{polyCub} knows how to get an \code{\link{xylist}}.)}
 
 \item{f}{a two-dimensional real-valued function to be integrated over
@@ -46,9 +47,11 @@ by default, which implements general-purpose product Gauss cubature.
 Details and examples in the \code{vignette("polyCub")}
 and on the method-specific help pages.
 
-Other polyCub-methods: \code{\link{polyCub.SV}},
-  \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.iso}}, \code{\link{polyCub.midpoint}}
+Other polyCub-methods: 
+\code{\link{polyCub.SV}()},
+\code{\link{polyCub.exact.Gauss}()},
+\code{\link{polyCub.iso}()},
+\code{\link{polyCub.midpoint}()}
 }
 \concept{polyCub-methods}
 \keyword{math}

@@ -4,17 +4,18 @@
 \alias{polyCub.SV}
 \title{Product Gauss Cubature over Polygonal Domains}
 \usage{
-polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL,
-  rotation = FALSE, engine = "C", plot = FALSE)
+polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
+  engine = "C", plot = FALSE)
 }
 \arguments{
 \item{polyregion}{a polygonal domain.
 The following classes are supported:
-\code{"\link[spatstat]{owin}"} from package \pkg{spatstat},
+\code{"\link[spatstat.geom]{owin}"} from package \pkg{spatstat.geom},
 \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
-\pkg{gpclib}), as well as
+\pkg{gpclib}),
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
-and \code{"\linkS4class{Polygon}"} from package \pkg{sp}.
+and \code{"\linkS4class{Polygon}"} from package \pkg{sp}, as well as
+\code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}.
 (For these classes, \pkg{polyCub} knows how to get an \code{\link{xylist}}.)}
 
 \item{f}{a two-dimensional real-valued function to be integrated over
@@ -87,7 +88,7 @@ hexagon <- list(
 )
 
 ## image of the function and integration domain
-plotpolyf(hexagon, f, xlim = c(-8,8), ylim = c(-8,8))
+plotpolyf(hexagon, f)
 
 ## use a degree of nGQ = 3 and show the corresponding nodes
 polyCub.SV(hexagon, f, nGQ = 3, plot = TRUE)
@@ -101,7 +102,7 @@ sum(nw$weights * f(nw$nodes))
 
 ## use an increasing number of nodes
 for (nGQ in c(1:5, 10, 20, 60))
-    cat(sprintf("nGQ = \%2i: \%.16f\\n", nGQ,
+    cat(sprintf("nGQ = \%2i: \%.16f\n", nGQ,
                 polyCub.SV(hexagon, f, nGQ = nGQ)))
 
 ## polyCub.SV() is the default method used by the polyCub() wrapper
@@ -111,42 +112,45 @@ polyCub(hexagon, f, nGQ = 3)  # calls polyCub.SV()
 ### now using a simple *rectangular* integration domain
 
 rectangle <- list(list(x = c(-1, 7, 7, -1), y = c(-3, -3, 7, 7)))
+polyCub.SV(rectangle, f, plot = TRUE)
 
-## try rotation (may improve accuracy)
+## effect of rotation given a very low nGQ
 opar <- par(mfrow = c(1,3))
 polyCub.SV(rectangle, f, nGQ = 4, rotation = FALSE, plot = TRUE)
-           title(main = "without rotation")
+           title(main = "without rotation (default)")
 polyCub.SV(rectangle, f, nGQ = 4, rotation = TRUE,  plot = TRUE)
-           title(main = "default rotation")
+           title(main = "standard rotation")
 polyCub.SV(rectangle, f, nGQ = 4,
            rotation = list(P = c(0,0), Q = c(2,-3)), plot = TRUE)
            title(main = "custom rotation")
 par(opar)
 
-## comparison with cubature::adaptIntegrate()
-if (require("cubature")) {
-    fc <- function (s, sigma = 5)
+## comparison with the "cubature" package
+if (requireNamespace("cubature")) {
+    fc <- function (s, sigma = 5)  # non-vectorized version of f
         exp(-sum(s^2)/2/sigma^2) / (2*pi*sigma^2)
-    adaptIntegrate(f = fc, lowerLimit = c(-1, -3), upperLimit = c(7, 7))
+    cubature::hcubature(fc, lowerLimit = c(-1, -3), upperLimit = c(7, 7))
 }
 }
 \references{
 Sommariva, A. and Vianello, M. (2007):
 Product Gauss cubature over polygons based on Green's integration formula.
-\emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.\cr
-DOI-Link: \url{https://doi.org/10.1007/s10543-007-0131-2}
+\emph{BIT Numerical Mathematics}, \bold{47} (2), 441-453.
+\doi{10.1007/s10543-007-0131-2}
 }
 \seealso{
-Other polyCub-methods: \code{\link{polyCub.exact.Gauss}},
-  \code{\link{polyCub.iso}},
-  \code{\link{polyCub.midpoint}}, \code{\link{polyCub}}
+Other polyCub-methods: 
+\code{\link{polyCub.exact.Gauss}()},
+\code{\link{polyCub.iso}()},
+\code{\link{polyCub.midpoint}()},
+\code{\link{polyCub}()}
 }
 \author{
 Sebastian Meyer\cr
 These R and C implementations of product Gauss cubature are based on the
 original \acronym{MATLAB} implementation \code{polygauss} by Sommariva and
 Vianello (2007), which is available under the GNU GPL (>=2) license from
-\url{http://www.math.unipd.it/~alvise/software.html}.
+\url{https://www.math.unipd.it/~alvise/software.html}.
 }
 \concept{polyCub-methods}
 \keyword{math}

@@ -1,3 +1,21 @@
+polyCub 0.8.0 (2021-01-26)
+==========================
+
+* Support `"(MULTI)POLYGON"` geometries from package
+  [**sf**](https://CRAN.R-project.org/package=sf) as integration domains
+  ([#3](https://github.com/bastistician/polyCub/issues/3)).
+  Since these classes do not strictly enforce a particular ring direction,
+  the vertex order is checked when the polygon coordinates are extracted for
+  cubature. Thus, **sf** polygons are a less efficient choice for
+  **polyCub** input than polygons from **sp** or **spatstat.geom**.
+  Note that `"POLYGON"` objects were already accepted in previous versions of
+  **polyCub** but this was undocumented and didn't check the vertex order.
+
+* The suggested package **spatstat** was split into several packages.
+  Package **polyCub** now only suggests **spatstat.geom** (to handle
+  `"owin"` polygons).
+
+
 polyCub 0.7.1 (2019-02-07)
 ==========================
 
@@ -5,7 +23,7 @@ polyCub 0.7.1 (2019-02-07)
   (suggested by @wrathematics in
   [openjournals/joss-reviews#1056](https://github.com/openjournals/joss-reviews/issues/1056)).
 
-* fix minor compiler warning about missing `types` field in `R_CMethodDef`
+* Fix minor compiler warning about missing `types` field in `R_CMethodDef`
   (@wrathematics, [#1](https://github.com/bastistician/polyCub/issues/1)).
 
 

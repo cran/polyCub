@@ -4,14 +4,14 @@
 \alias{polyCub.exact.Gauss}
 \title{Quasi-Exact Cubature of the Bivariate Normal Density}
 \usage{
-polyCub.exact.Gauss(polyregion, mean = c(0, 0), Sigma = diag(2),
-  plot = FALSE)
+polyCub.exact.Gauss(polyregion, mean = c(0, 0), Sigma = diag(2), plot = FALSE)
 }
 \arguments{
 \item{polyregion}{a \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} polygon or
 something that can be coerced to this class, e.g., an \code{"owin"} polygon
-(converted via \code{\link{owin2gpc}} and -- given \pkg{rgeos} is available
--- \code{"SpatialPolygons"} also work.}
+(via \code{\link{owin2gpc}}), an \code{"sfg"} polygon (via
+\code{\link{sfg2gpc}}), or -- given \pkg{rgeos} is available
+-- a \code{"SpatialPolygons"} object.}
 
 \item{mean, Sigma}{mean and covariance matrix of the bivariate normal density
 to be integrated.}
@@ -85,9 +85,11 @@ Tables. New York: Dover Publications.
 \code{\link{circleCub.Gauss}} for quasi-exact cubature of the
 isotropic Gaussian density over a circular domain.
 
-Other polyCub-methods: \code{\link{polyCub.SV}},
-  \code{\link{polyCub.iso}},
-  \code{\link{polyCub.midpoint}}, \code{\link{polyCub}}
+Other polyCub-methods: 
+\code{\link{polyCub.SV}()},
+\code{\link{polyCub.iso}()},
+\code{\link{polyCub.midpoint}()},
+\code{\link{polyCub}()}
 }
 \concept{polyCub-methods}
 \keyword{math}
