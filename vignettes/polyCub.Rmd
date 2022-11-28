@@ -6,10 +6,19 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with polyCub}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{polyCub, spatstat.geom}
 ---
 
 ```{R setup, include = FALSE, purl = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+
+## maintainer-mode options for building the vignette:
+if (USE_GPCLIB <- identical(Sys.getenv("R_GPCLIBPERMIT"), "true")) {
+    stopifnot(requireNamespace("gpclib"))
+    polyCub::gpclibPermit()
+}
+if (DO_BENCHMARK <- USE_GPCLIB && identical(Sys.getenv("NOT_CRAN"), "true"))
+    stopifnot(requireNamespace("microbenchmark"))
 ```
 
 <img src="../man/figures/logo.png" align="right" alt="" width="120" />
@@ -239,8 +248,7 @@ from the [**mvtnorm**](https://CRAN.R-project.org/package=mvtnorm) package.
 
 For the above example, we obtain:
 
-```{R}
-gpclibPermit()  # accept gpclib license (prohibits commercial use)
+```{R, purl = FALSE, eval = USE_GPCLIB}
 polyCub.exact.Gauss(hexagon.owin, mean = c(0,0), Sigma = 5^2*diag(2))
 ```
 
@@ -267,20 +275,20 @@ For comparison, we also run `polyCub.iso()` without the analytically derived
 
 The median runtimes [ms] of the different cubature methods are given below.
 
-```{r benchmark, purl = FALSE, eval = identical(Sys.getenv("NOT_CRAN"), "true")}
+```{r benchmark, purl = FALSE, eval = DO_BENCHMARK}
 benchmark <- microbenchmark::microbenchmark(
   SV = polyCub.SV(hexagon.owin, f, nGQ = 4),
   midpoint = polyCub.midpoint(hexagon.owin, f, dimyx = 1200),
   iso = polyCub.iso(hexagon.owin, intrfr = intrfr, center = c(0,0)),
   iso_double_approx = polyCub.iso(hexagon.owin, f, center = c(0,0)),
   exact = polyCub.exact.Gauss(hexagon.owin, mean = c(0,0), Sigma = 5^2*diag(2)),
-  times = 6,
+  times = 9,
   check = function (values) all(abs(unlist(values) - 0.274144773813434) < 1e-8))
 ```
 ```{r, purl = FALSE, eval = FALSE}
 summary(benchmark, unit = "ms")[c("expr", "median")]
 ```
-```{r, purl = FALSE, echo = FALSE, eval = identical(Sys.getenv("NOT_CRAN"), "true")}
+```{r, purl = FALSE, echo = FALSE, eval = DO_BENCHMARK}
 knitr::kable(summary(benchmark, unit = "ms")[c("expr", "median")], digits = 2)
 ```
 

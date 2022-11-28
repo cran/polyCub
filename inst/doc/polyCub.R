@@ -56,7 +56,3 @@ intrfr <- function (R, sigma = 5)
 ## -----------------------------------------------------------------------------
 polyCub.iso(hexagon, intrfr = intrfr, center = c(0,0))
 
-## -----------------------------------------------------------------------------
-gpclibPermit()  # accept gpclib license (prohibits commercial use)
-polyCub.exact.Gauss(hexagon.owin, mean = c(0,0), Sigma = 5^2*diag(2))
-
