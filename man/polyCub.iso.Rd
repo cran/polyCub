@@ -15,8 +15,7 @@ polyCub.iso(polyregion, f, intrfr, ..., center, control = list(),
 \item{polyregion}{a polygonal domain.
 The following classes are supported:
 \code{"\link[spatstat.geom]{owin}"} from package \pkg{spatstat.geom},
-\code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
-\pkg{gpclib}),
+\code{"gpc.poly"} from \pkg{gpclib},
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
 and \code{"\linkS4class{Polygon}"} from package \pkg{sp}, as well as
 \code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}.
@@ -128,7 +127,7 @@ Power-law models for infectious disease spread.
 \code{system.file("include", "polyCubAPI.h", package = "polyCub")}
 for a full C-implementation of this cubature method (for a \emph{single}
 polygon). The corresponding C-routine \code{polyCub_iso} can be used by
-other \R packages, notably \pkg{surveillance}, via \samp{LinkingTo: polyCub}
+other \R packages, notably \CRANpkg{surveillance}, via \samp{LinkingTo: polyCub}
 (in the \file{DESCRIPTION}) and \samp{#include <polyCubAPI.h>} (in suitable
 \file{/src} files). Note that the \code{intrfr} function must then also be
 supplied as a C-routine. An example can be found in the package tests.

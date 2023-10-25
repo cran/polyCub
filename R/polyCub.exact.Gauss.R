@@ -1,7 +1,7 @@
 ################################################################################
 ### polyCub.exact.Gauss: Quasi-Exact Cubature of the Bivariate Normal Density
 ###
-### Copyright (C) 2009-2018,2021 Sebastian Meyer
+### Copyright (C) 2009-2018,2021-2023 Sebastian Meyer
 ###
 ### This file is part of the R package "polyCub",
 ### free software under the terms of the GNU General Public License, version 2,
@@ -9,32 +9,32 @@
 ################################################################################
 
 
-#' Quasi-Exact Cubature of the Bivariate Normal Density
+#' Quasi-Exact Cubature of the Bivariate Normal Density (DEFUNCT)
+#'
+#' This cubature method is \strong{defunct} as of \pkg{polyCub} version 0.9.0.
+#' It relied on \code{tristrip()} from package \CRANpkg{gpclib} for polygon
+#' triangulation, but that package did not have a \acronym{FOSS} license and
+#' was no longer maintained on a mainstream repository.\cr
+#' Contributions to resurrect this cubature method are welcome: an alternative
+#' implementation for constrained polygon triangulation is needed, see
+#' \url{https://github.com/bastistician/polyCub/issues/2}.
 #'
 #' The bivariate Gaussian density can be integrated based on a triangulation of
 #' the (transformed) polygonal domain, using formulae from the
 #' Abramowitz and Stegun (1972) handbook (Section 26.9, Example 9, pp. 956f.).
 #' This method is quite cumbersome because the A&S formula is only for triangles
-#' where one vertex is the origin (0,0). For each triangle of the
-#' \code{\link[gpclib]{tristrip}} we have to check in which of the 6 outer
+#' where one vertex is the origin (0,0). For each triangle
+#' we have to check in which of the 6 outer
 #' regions of the triangle the origin (0,0) lies and adapt the signs in the
 #' formula appropriately: \eqn{(AOB+BOC-AOC)} or \eqn{(AOB-AOC-BOC)} or
 #' \eqn{(AOB+AOC-BOC)} or \eqn{(AOC+BOC-AOB)} or \ldots.
 #' However, the most time consuming step is the
 #' evaluation of \code{\link[mvtnorm]{pmvnorm}}.
 #'
-#' @note The package \pkg{gpclib} is required to produce the
-#' \code{tristrip}, since this is not implemented in \pkg{rgeos}
-#' (as of version 0.3-25).
-#' The restricted license of \pkg{gpclib} (commercial use prohibited)
-#' has to be accepted explicitly via
-#' \code{\link{gpclibPermit}()} prior to using \code{polyCub.exact.Gauss}.
-#'
-#' @param polyregion a \code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} polygon or
+#' @param polyregion a \code{"gpc.poly"} polygon or
 #' something that can be coerced to this class, e.g., an \code{"owin"} polygon
-#' (via \code{\link{owin2gpc}}), an \code{"sfg"} polygon (via
-#' \code{\link{sfg2gpc}}), or -- given \pkg{rgeos} is available
-#' -- a \code{"SpatialPolygons"} object.
+#' (via \code{\link{owin2gpc}}), or an \code{"sfg"} polygon (via
+#' \code{\link{sfg2gpc}}).
 #' @param mean,Sigma mean and covariance matrix of the bivariate normal density
 #' to be integrated.
 #' @param plot logical indicating if an illustrative plot of the numerical
@@ -65,8 +65,7 @@
 #' @example examples/setting.R
 #' @examples
 #' ## quasi-exact integration based on gpclib::tristrip() and mvtnorm::pmvnorm()
-#' \dontrun{## (this example requires gpclib and acceptance of its license)
-#' gpclibPermit()
+#' \dontrun{## (this example requires gpclib)
 #' hexagon.gpc <- new("gpc.poly", pts = lapply(hexagon, c, list(hole = FALSE)))
 #' plotpolyf(hexagon.gpc, f, xlim = c(-8,8), ylim = c(-8,8))
 #' print(polyCub.exact.Gauss(hexagon.gpc, mean = c(0,0), Sigma = 5^2*diag(2),
@@ -81,19 +80,24 @@
 polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
                                  plot = FALSE)
 {
-    gpclibCheck(fatal=TRUE)
+    ## defunctify with a maintainer-level backdoor for building the vignette
+    if (!identical(Sys.getenv("R_GPCLIBPERMIT"), "true"))
+    .Defunct(msg = paste0(
+        "'polyCub.exact.Gauss' is currently unavailable.\n",
+        "Contributions are welcome: <https://github.com/bastistician/polyCub/issues/2>"
+        ))
+
     if (inherits(polyregion, "owin")) {
         polyregion <- owin2gpc(polyregion)
     } else if (inherits(polyregion, "sfg")) {
         polyregion <- sfg2gpc(polyregion)
     } else if (!inherits(polyregion, "gpc.poly")) {
-        if (inherits(polyregion, "SpatialPolygons") &&
-            !requireNamespace("rgeos")) {
-            stop("package ", sQuote("rgeos"), " is required to handle ",
-                 "\"SpatialPolygons\" input")
-        }
         polyregion <- as(polyregion, "gpc.poly")
     }
+
+    stopifnot(is.numeric(mean), length(mean) == 2L, !is.na(mean),
+              is.matrix(Sigma), identical(dim(Sigma), c(2L, 2L)),
+              is.numeric(Sigma), diag(Sigma) > 0, !is.na(Sigma))
 
     ## coordinate transformation so that the standard bivariat normal density
     ## can be used in integrations (cf. formula 26.3.22)
@@ -101,7 +105,8 @@ polyCub.exact.Gauss <- function (polyregion, mean = c(0,0), Sigma = diag(2),
 
     ## triangulation: tristrip() returns a list where each element is a
     ## coordinate matrix of vertices of triangles
-    triangleSets <- gpclib::tristrip(polyregion)
+    ## FIXME: need a reliable tristrip() alternative
+    triangleSets <- utils::getFromNamespace("tristrip", "gpclib")(polyregion)
 
 ### ILLUSTRATION ###
     if (plot) {
@@ -141,7 +146,7 @@ transform_pts <- function (pts, mean, Sigma)
 {
     mx <- mean[1L]
     my <- mean[2L]
-    rho <- cov2cor(Sigma)[1L,2L]
+    stopifnot(abs(rho <- cov2cor(Sigma)[1L,2L]) < 1)
     sdx <- sqrt(Sigma[1L,1L])
     sdy <- sqrt(Sigma[2L,2L])
     lapply(pts, function (poly) {

@@ -11,8 +11,7 @@ polyCub.SV(polyregion, f, ..., nGQ = 20, alpha = NULL, rotation = FALSE,
 \item{polyregion}{a polygonal domain.
 The following classes are supported:
 \code{"\link[spatstat.geom]{owin}"} from package \pkg{spatstat.geom},
-\code{"\link[rgeos:gpc.poly-class]{gpc.poly}"} from \pkg{rgeos} (or
-\pkg{gpclib}),
+\code{"gpc.poly"} from \pkg{gpclib},
 \code{"\linkS4class{SpatialPolygons}"}, \code{"\linkS4class{Polygons}"},
 and \code{"\linkS4class{Polygon}"} from package \pkg{sp}, as well as
 \code{"\link[sf:st_polygon]{(MULTI)POLYGON}"} from package \pkg{sf}.
@@ -28,7 +27,7 @@ length the number of coordinates.}
 
 \item{nGQ}{degree of the one-dimensional Gauss-Legendre quadrature rule
 (default: 20) as implemented in function \code{\link[statmod]{gauss.quad}}
-of package \pkg{statmod}. Nodes and weights up to \code{nGQ=60} are cached
+of package \CRANpkg{statmod}. Nodes and weights up to \code{nGQ=60} are cached
 in \pkg{polyCub}, for larger degrees \pkg{statmod} is required.}
 
 \item{alpha}{base-line of the (rotated) polygon at \eqn{x = \alpha} (see

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sebastian Meyer" />
 
-<meta name="date" content="2022-11-25" />
+<meta name="date" content="2023-10-25" />
 
 <title>Getting started with polyCub</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Getting started with polyCub</h1>
 <h4 class="author">Sebastian Meyer</h4>
-<h4 class="date">2022-11-25</h4>
+<h4 class="date">2023-10-25</h4>
 
 
 
@@ -362,8 +362,7 @@ is repeated.</p>
 <p>All of <strong>polyCub</strong>’s cubature methods understand</p>
 <ul>
 <li><p><code>&quot;owin&quot;</code> from package <a href="https://CRAN.R-project.org/package=spatstat.geom"><strong>spatstat.geom</strong></a>,</p></li>
-<li><p><code>&quot;gpc.poly&quot;</code> from <a href="https://CRAN.R-project.org/package=rgeos"><strong>rgeos</strong></a>
-(or <a href="https://CRAN.R-project.org/package=gpclib"><strong>gpclib</strong></a>),</p></li>
+<li><p><code>&quot;gpc.poly&quot;</code> from <a href="https://github.com/rdpeng/gpclib/"><strong>gpclib</strong></a>,</p></li>
 <li><p><code>&quot;SpatialPolygons&quot;</code> from package <a href="https://CRAN.R-project.org/package=sp"><strong>sp</strong></a>,
 and</p></li>
 <li><p><code>&quot;(MULTI)POLYGON&quot;</code> from package <a href="https://CRAN.R-project.org/package=sf"><strong>sf</strong></a>.</p></li>
@@ -385,8 +384,8 @@ rule</p></li>
 <li><p><code>polyCub.iso()</code>: Adaptive cubature for radially
 symmetric functions <span class="math inline">\(f(x,y) =
 f_r(\lVert(x-x_0,y-y_0)\rVert)\)</span></p></li>
-<li><p><code>polyCub.exact.Gauss()</code>: Accurate (but slow)
-integration of the bivariate Gaussian density</p></li>
+<li><p><code>polyCub.exact.Gauss()</code> (<em>currently disabled</em>):
+Accurate integration of the bivariate Gaussian density</p></li>
 </ol>
 <p>The following section details and illustrates the different cubature
 methods.</p>
@@ -525,17 +524,20 @@ for an example.</p>
 <div id="integration-of-the-bivariate-gaussian-density-polycub.exact.gauss" class="section level3">
 <h3>4. Integration of the <em>bivariate Gaussian density</em>:
 <code>polyCub.exact.Gauss()</code></h3>
+<p><em>This cubature method is currently disabled</em> (<a href="https://github.com/bastistician/polyCub/issues/2">#2</a>). It
+requires polygon triangulation originally performed using
+<code>tristrip()</code> from the <a href="https://github.com/rdpeng/gpclib/"><strong>gpclib</strong></a>
+package; unfortunately, it has become unavailable from mainstream
+repositories.</p>
 <p>Abramowitz and Stegun (1972, Section 26.9, Example 9) offer a formula
 for the integral of the bivariate Gaussian density over a triangle with
 one vertex at the origin. This formula can be used after triangulation
-of the polygonal domain (<strong>polyCub</strong> currently uses
-<code>tristrip()</code> from the <a href="https://CRAN.R-project.org/package=gpclib"><strong>gpclib</strong></a>
-package). The core of the formula is an integral of the bivariate
-Gaussian density with zero mean, unit variance and some correlation over
-an infinite rectangle [h, Inf] x [0, Inf], which can be computed
-accurately using <code>pmvnorm()</code> from the <a href="https://CRAN.R-project.org/package=mvtnorm"><strong>mvtnorm</strong></a>
+of the polygonal domain. The core of the formula is an integral of the
+bivariate Gaussian density with zero mean, unit variance and some
+correlation over an infinite rectangle [h, Inf] x [0, Inf], which can be
+computed accurately using <code>pmvnorm()</code> from the <a href="https://CRAN.R-project.org/package=mvtnorm"><strong>mvtnorm</strong></a>
 package.</p>
-<p>For the above example, we obtain:</p>
+<p>For the above example, we obtained:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">polyCub.exact.Gauss</span>(hexagon.owin, <span class="at">mean =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> <span class="dv">5</span><span class="sc">^</span><span class="dv">2</span><span class="sc">*</span><span class="fu">diag</span>(<span class="dv">2</span>))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.2741448</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;nEval&quot;)</span></span>
@@ -543,7 +545,7 @@ package.</p>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;error&quot;)</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 4.6e-14</span></span></code></pre></div>
 <p>The required triangulation as well as the numerous calls of
-<code>pmvnorm()</code> make this integration algorithm quiet cumbersome.
+<code>pmvnorm()</code> make this integration algorithm quite cumbersome.
 For large-scale integration tasks, it is thus advisable to resort to the
 general-purpose product Gauss cubature rule
 <code>polyCub.SV()</code>.</p>
@@ -587,23 +589,23 @@ below.</p>
 <tbody>
 <tr class="odd">
 <td align="left">SV</td>
-<td align="right">0.08</td>
+<td align="right">0.07</td>
 </tr>
 <tr class="even">
 <td align="left">midpoint</td>
-<td align="right">176.15</td>
+<td align="right">179.58</td>
 </tr>
 <tr class="odd">
 <td align="left">iso</td>
-<td align="right">0.27</td>
+<td align="right">0.28</td>
 </tr>
 <tr class="even">
 <td align="left">iso_double_approx</td>
-<td align="right">3.89</td>
+<td align="right">3.97</td>
 </tr>
 <tr class="odd">
 <td align="left">exact</td>
-<td align="right">6.73</td>
+<td align="right">7.05</td>
 </tr>
 </tbody>
 </table>

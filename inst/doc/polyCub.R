@@ -39,7 +39,7 @@ for (nGQ in c(1:5, 10, 20)) {
     cat(sprintf("nGQ = %2i: %.12f (n=%i)\n", nGQ, result, attr(result, "nEval")))
 }
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 library("spatstat.geom")
 hexagon.owin <- owin(poly = hexagon)
 
