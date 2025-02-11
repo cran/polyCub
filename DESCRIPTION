@@ -1,7 +1,7 @@
 Package: polyCub
 Title: Cubature over Polygonal Domains
-Version: 0.9.1
-Date: 2024-05-21
+Version: 0.9.2
+Date: 2025-02-11
 Authors@R: c(
     person("Sebastian", "Meyer",
            email = "seb.meyer@fau.de",
@@ -34,13 +34,13 @@ Imports: grDevices, graphics, stats, sp (>= 1.0-11)
 Suggests: spatstat.geom, lattice, mvtnorm, statmod, sf, cubature,
         knitr, markdown, microbenchmark
 VignetteBuilder: knitr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 NeedsCompilation: yes
-Packaged: 2024-05-21 14:21:16 UTC; smeyer
+Packaged: 2025-02-11 14:09:39 UTC; smeyer
 Author: Sebastian Meyer [aut, cre, trl]
     (<https://orcid.org/0000-0002-1791-9449>),
   Leonhard Held [ths],
   Michael Hoehle [ths]
 Maintainer: Sebastian Meyer <seb.meyer@fau.de>
 Repository: CRAN
-Date/Publication: 2024-05-21 15:20:10 UTC
+Date/Publication: 2025-02-11 16:10:01 UTC
